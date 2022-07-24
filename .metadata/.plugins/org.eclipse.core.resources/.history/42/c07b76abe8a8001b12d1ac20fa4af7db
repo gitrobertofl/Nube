@@ -1,0 +1,35 @@
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+
+/******************************************************************************
+ * 
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ * <div>Este es un servicio del Cliente.</div>
+ * <div>Será utilizado por el servicio Servidor-Operador del repositorio para
+ * descargar al disco duro local del cliente el fichero que este 
+ * considere oportuno.</div>
+ * 
+ * 
+ * @author Roberto J. de la Fuente Lopez
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20210422
+ ******************************************************************************/
+
+public interface ServicioDiscoClienteInterface extends Remote 
+  {
+  //métodos get-set IDCliente
+  public void setIDCliente(String nombre)throws RemoteException;
+  
+  public String getIDCliente() throws RemoteException;
+  
+  
+  
+  public Boolean bajarFichero(Fichero fichero) throws RemoteException;
+   
+  
+  
+}

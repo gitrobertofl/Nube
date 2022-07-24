@@ -1,0 +1,15 @@
+package usuario;
+
+public interface GUIRepositorioInterface
+  {
+
+	/**
+	  * 
+	  * 
+	  * @param IDRepositorio
+	  * @return
+	  */
+	   public String obtenerIDCliente(String IDRepositorio);
+	
+	
+  }//fin GUIRepositorioInterface

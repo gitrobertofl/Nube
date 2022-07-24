@@ -1,0 +1,10 @@
+package usuario;
+
+public class Repositorio extends Usuario {
+
+	public Repositorio(String tipoUsuario) {
+		super(tipoUsuario);
+		// TODO Auto-generated constructor stub
+	}
+
+}

@@ -1,0 +1,65 @@
+package usuario;
+
+import servidor.NubeRMI;
+
+public class Repositorio extends Usuario {
+
+	public Repositorio() {
+	 super("repositorio");	
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	protected void inicioSesionUsuario()
+	  {
+        //est� acreditado: ver repositorio activo antes
+        
+        
+        // si repositorio asignado est� activo
+        IDRepoAsignado=gestor.repoAsignadoCliente(acreditacionUsuario.getNombre());
+        //obtenemos referencia servicio cloperador del repo asignado
+        svcClOperador=NubeRMI.obtenerRefClOperadorRepo(IDRepoAsignado);
+        /*
+        svcClOperador=(ServicioClOperadorInterface)
+                      servicioRMI.getRefRegistroRMI().lookup(servicioRMI.getBindRepoCl()+IDRepoAsignado);
+        */
+        //ordenamos que nos reserve carpeta en ese repositorio, si no lo ten�a.
+        gestor.carpetaClienteEnRepo(acreditacionUsuario.getNombre(),IDRepoAsignado); 
+        //registrar servicio discoCliente lo en RMI    
+        servicioDiscoCliente=new ServicioDiscoClienteImpl(acreditacionUsuario.getNombre());
+        
+        System.out.println("MSG:hemos creado el objeto del servicio disco cliente "+ servicioDiscoCliente.getNickCliente());   
+        
+        // lo registra en RMI 
+        gestor.registraServicioCliente(acreditacionUsuario.getNombre(),servicioDiscoCliente);
+        /*
+        registroRMIRemoto.registrarObjetoRemoto
+              //"Cliente/"
+              (Configuracion.bindDiscoCliente+acreditacionCliente.getNombre(),
+                          servicioDiscoCliente);
+        */
+        System.out.println("MSG hemos registrado el objeto del servicio disco cliente "+ servicioDiscoCliente.getNickCliente()); 
+        
+        
+        
+        
+        //entramos en menu acreditado 
+        menuCliente(GUI,acreditacionUsuario.getNombre());
+        //como vamos a salir, marcamos como repositorio inactivo, 
+        //�y si tiene un cliente enganchado? avisar o no hacerlo
+        autenticacion.desactivarCliente(acreditacionUsuario.getNombre()); 
+        // desregistramos los servicios de RMI
+        gestor.desRegistrarServicioCliente(acreditacionUsuario.getNombre());
+        /*
+        registroRMIRemoto.desRegistrarObjetoRemoto
+            //"Cliente/"
+            (Configuracion.bindDiscoCliente+servicioDiscoCliente.getNickCliente());
+      */
+        
+		
+		
+		
+		
+	  }
+	
+}

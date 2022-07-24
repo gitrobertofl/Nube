@@ -1,0 +1,282 @@
+package usuario;
+
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA AL OTRO PAQUETE*/
+
+import servidor.ServicioGestorInterface;
+import servidor.ServicioAutenticacionInterface;
+
+import servidor.MiRegistroRMI;
+import servidor.NubeRMI;
+
+/*FIN INTERFAZ REMOTA*/
+
+import java.rmi.*;
+//import java.io.File;
+
+/******************************************************************************
+ * 
+ * *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21).
+ *
+ * <div>Esta es la clase que representa entidad Usuario.
+ * 
+ * 
+ * 
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ ******************************************************************************/
+public abstract class Usuario
+  {
+    //constantes de clase
+	//cadenas que identifican el tipo de entidad
+	final static String TIPO_CLIENTE="cliente";
+	final static String TIPO_REPOSITORIO="repositorio";
+	
+    
+  //variables de clase.
+  //creamos los objetos proxy con acceso a servicios remotos
+  protected  static ServicioGestorInterface gestor; //servicio gestor en servidor
+  protected  static ServicioAutenticacionInterface autenticacion; //servicio autenticaci�n en ser
+  
+  //ATRIBUTOS DE INSTANCIA
+  
+  protected GUIUsuarioInterface gUI;
+  protected String tipoUsuario="";
+  
+  //ID de Sesion
+  private static String IDSesion="";
+  
+  
+  /*
+   * constructor de la clase. crea un usuario de uno u otro tipo, según los parámetros
+   * 
+   */
+  public Usuario(String tipoUsr)
+    {
+	//** Configuracion del cliente
+	//preparamos el GUI y marcamos el tipo de 
+	if (tipoUsr.equals(TIPO_CLIENTE))
+	  {
+	  
+	  gUI = new GUIClienteTexto(tipoUsuario);
+	  tipoUsuario=TIPO_CLIENTE;
+	  }
+	 else
+	  {	
+	  tipoUsuario=TIPO_REPOSITORIO;	 
+	  gUI = new GUIRepositorioTexto(tipoUsuario);
+	  
+	  }
+		  
+	  
+	  
+	  
+	  
+	  
+    }//fin constructor Usuario (tipoUsuario
+      
+  
+  
+  private static Boolean conexionRMI() 
+    {
+	Boolean correcto=true;  
+	// DATO IMPORTANTE: la IP del servicio RMI
+	final String IPHostRegistroRMI=Configuracion.IPHostRegistroRMI;//"localhost";
+	// DATO IMPORTANTE: EL PUERT DE ESCUCHA DEL REGISTRO RMI
+	final Integer puertoRMI=Configuracion.puertoServidorRMI;//1099;
+	//se obtiene una referencia al servidor RMI en atributo de MiRegistroRMI
+	MiRegistroRMI.refAMiRegRMI(IPHostRegistroRMI,puertoRMI); 
+	//comprobamos si hubo error de conexión con el registro,
+	 if (MiRegistroRMI.getRefRegistroRMI()==null)
+	   correcto=false;
+	//y devolvemos el resultado
+	return correcto;
+	  
+	  
+    }//FIN CONEXIÓN RMI
+  
+  public static void main (String args[])
+    {
+    
+    
+    //=============================================================================
+    // ejecucion 
+    //=============================================================================
+    //carga del gestor de seguridad
+    
+    
+    //System.setSecurityManager(new RMISecurityManager( ));
+	//preparamos el usuario según el tipo
+	Usuario usuario=null;
+	//creamos el objeto usuario  
+	if (args[0].equals(TIPO_CLIENTE))
+	  usuario = new Cliente();
+	 else
+	  usuario = new Repositorio();  
+	
+	
+	//si tenemos servicios conectamos con RMI
+	if (conexionRMI())
+	  {
+	  try
+	    {
+		
+		  
+	    //obtenemos los servicios del servidor	
+	    //inicializamos los objetos proxy con acceso a servicios remotos
+	    gestor=NubeRMI.obtenerRefSvrGestor();
+	    autenticacion=NubeRMI.obtenerRefSvrAutenticacion();
+	        
+	   //no error de registro ni de proxy a Servidor
+	   System.out.println("MSG:no error de registro ni de proxy a servidor:reg, aut y gestor");
+	   //una vez montado el esquema remoto, iniciamos el menu principal
+	   usuario.menuUsuario();     
+	    
+	   
+	   
+	   
+	   
+	   }//fin try
+	  catch (RemoteException re)
+	    {
+	    usuario.gUI.errorAccesoRemotoObjeto(re.toString());  
+	    }//fin catch REmoteException
+	   catch (NotBoundException be)
+	    {
+	    usuario.gUI.errorNoEncuentraObjRemoto(be.toString());  
+	    }//fin catchnotboundException
+	   catch (Exception e)
+	    {
+	    usuario.gUI.errorGenerico(e.toString());  
+	    }//fin catch 
+	        
+    }	//fin si correcto
+	else
+		 {
+		 usuario.gUI.errorRegistroRMI();	
+			
+		 }	
+
+	
+	
+	 //si hubo error, ya lo visualizó
+    
+     
+    
+    System.exit(0); 
+    
+    }//fin del main   
+
+  
+  private void menuUsuario()
+    {
+    //opcion de menu
+    Character opcion='0';
+    //creamos una acreditacion de Cliente
+	AcreditacionUsuario acreditacionUsuario;
+	try
+	  {
+	  do
+	    {
+	    //capturamos la operaci�n a realizar desde el GUI    
+	    opcion=gUI.menuInicio();
+	    switch (opcion)
+	      {
+	      case '1'://ALTA de usuario
+	               //obtenemos nick y contrase�a por teclado  
+	               acreditacionUsuario=gUI.login(opcion);
+	               //tenemos los datos de acreditacion
+	               //llama al servicio de autentificacion:alta de usuario según tipo
+	               //informa si hubo error o no
+	                    
+	                     //hacer con captura de errores de java. es m�s elegante
+	                    //entonces: 
+	               // si true: alta correcta, si false: error
+	               if (autenticacion.altaUsuario(acreditacionUsuario.getNombre(),
+	                                             acreditacionUsuario.getPassword(),
+	                                             tipoUsuario))
+	                      {
+	                      gUI.altaUsuarioCorrecta();    
+	                      }
+	                     else
+	                      {
+	                      //excepcion
+	                      gUI.errorAcreditacion(opcion);  
+	                      }
+	                    //como permite m�s altas, no se registra el obj remoto.
+	                    //para dar de alta no hace falta registrar
+	                    //vuelve al menu de inicio (no entra directamente)
+	                    opcion='0';
+	                    break;
+	           case '2'://inicio sesion
+	                    //obtenemos nick y contrase�a por teclado  
+	                    acreditacionUsuario=gUI.login(opcion);
+	                    //llama al servicio de autentificaci�n de repositorio
+	                    //no permite dos sesiones
+	                     //hacer con captura de errores de java. es m�s elegante
+	                    //entonces: 
+	                    // si cadena true: alta correcta
+	                    // si "": error
+	                    IDSesion=autenticacion.autenticarUsuario(acreditacionUsuario.getNombre(),
+	                    										 acreditacionUsuario.getPassword(),
+	                    										 tipoUsuario);
+	                   
+	                   
+	                    //se ha marcado como activo se inicia la sesión
+	                    if (!IDSesion.equals(""))
+	                      inicioSesionUsuario(acreditacionUsuario.getNombre());
+	                    else
+	                     //pantalla de error de acreditacion y vuelta al menu
+		                 gUI.errorAcreditacion(opcion);	
+	                    
+	               
+	                    //solo quedan los servicios de servidor
+	                    //vuelve al menu de inicio
+	                    opcion='0'; 
+	                    break;
+	           case '3'://salir
+	                    //pantalla informativa fin
+	                    gUI.finDePrograma(tipoUsuario); 
+	                    break;
+	           default :System.out.print("opcion erronea");   
+	          }//fin switch
+	        }
+	      while(opcion!='3');
+	      }//fin try main
+	      catch (RemoteException re)
+	      {
+	      gUI.errorAccesoRemotoObjeto(re.toString());  
+	      }//fin catch REmoteException
+	
+	     catch (AlreadyBoundException re)
+	       {
+	       System.err.println("ya existe el objeto enRMI o: gui"); 
+	       }
+	
+	     catch (NotBoundException re)
+	       {
+	       gUI.errorNoEncuentraObjRemoto(re.toString()); 
+	        }
+	        
+	      catch (Exception e)
+	      {
+	       gUI.errorGenerico(e.toString());  
+	      }//fin catch 
+	  
+    }
+  
+  protected abstract void inicioSesionUsuario(String iDUsuario) 
+		  throws RemoteException,AlreadyBoundException,NotBoundException;
+ 
+  
+    
+    
+    
+      
+    
+  }//fin clase Usuario

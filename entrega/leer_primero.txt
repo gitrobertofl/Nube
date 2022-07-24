@@ -1,0 +1,8 @@
+Esta es una práctica de 9.5. El ED quitó medio punto por no tener conclusiones. Aquí las he añadido.
+
+Puede servir de ejemplo distinto: lo he hecho con 2 paquetes (por las grandes similitudes entre cliente y repositorio,
+que consideré "clientes", aplicando herencia para no repetir la mitad del código) 
+y un solo proyecto.
+
+Está probado en una LAN (lo podéis ver en los pantallazos).
+

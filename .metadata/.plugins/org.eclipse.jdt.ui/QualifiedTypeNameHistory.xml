@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="jdk.jfr.Label"/>
+    <fullyQualifiedTypeName name="usuario.ServicioDiscoClienteInterface"/>
+    <fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
+    <fullyQualifiedTypeName name="servidor.NubeRMI"/>
+    <fullyQualifiedTypeName name="usuario.Usuario"/>
+    <fullyQualifiedTypeName name="java.io.IOException"/>
+    <fullyQualifiedTypeName name="java.util.logging.FileHandler"/>
+    <fullyQualifiedTypeName name="java.util.logging.ConsoleHandler"/>
+    <fullyQualifiedTypeName name="servidor.MiRegistroRMI"/>
+    <fullyQualifiedTypeName name="usuario.GUIRepositorioTexto"/>
+    <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="java.rmi.AlreadyBoundException"/>
+    <fullyQualifiedTypeName name="java.rmi.NotBoundException"/>
+    <fullyQualifiedTypeName name="java.rmi.RemoteException"/>
+</qualifiedTypeNameHistroy>

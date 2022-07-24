@@ -1,0 +1,41 @@
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+
+/**
+ * Write a description of interface CallBackInterface here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+
+public interface ServicioDiscoClienteInterface extends Remote 
+  {
+ 
+
+  
+  //public void setRespondidoGest(Boolean flag) throws RemoteException;
+      
+  public void setRespondidoAut(Boolean flag) throws RemoteException;
+  
+  public void setAutorizado(Boolean flag)throws RemoteException;
+      
+  public void setNicCliente(String nombre)throws RemoteException; 
+  
+  public Boolean getRespondidoAut()throws RemoteException;
+  
+  public Boolean getAutorizado()throws RemoteException;
+  
+  
+ 
+  public String getNickCliente()throws RemoteException;    
+    
+  
+  public Boolean bajarFichero(Fichero fichero) throws RemoteException;
+   
+  
+  
+  
+  public String msgServicioDiscoCliente(String mensaje)
+                    throws RemoteException;
+}

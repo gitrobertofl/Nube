@@ -1,0 +1,2 @@
+INDEX VERSION 1.131+F:\G0305_sistemas_distribuidos\PRAC_2021\.metadata\.plugins\org.eclipse.jdt.core
+3232039667.index

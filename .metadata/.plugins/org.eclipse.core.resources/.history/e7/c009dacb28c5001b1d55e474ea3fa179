@@ -1,0 +1,325 @@
+package servidor;
+
+
+import java.rmi.*;
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.net.InetAddress;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.io.IOException;
+
+/******************************************************************************
+ * <div>Esta clase estática contiene toda la logica correspondiente al registro
+ * RMI. Si se utiliza en locahost, permite la creacion de un servicio de 
+ * registro RMI.</div> 
+ * <div>Si el registro ya está en ejecución,simplemente crea la referencia
+ * al registro y la guarda.</div>
+ * <div>Tambien contiene la URL valida de acceso al mismo.</div>
+ * 
+ * <div>Si se utiliza en un host distinto al de ejecución del registro RMI,
+ *  permite la creacion de esa referencia que tiene registrados los objetos
+ * remotos de la aplicacion distribuida.</div>
+ * 
+ * <div>En todos los casos comprueba la conexion con el registro. Si no esta en
+ * servicio pone a null el atributo registroRMI. Es decir, si 
+ * registrRMI.isNull()==true, no hay servicio levantado.</div>
+ * 
+ * <div>Por defecto utiliza la IP de localhost (primera NIC) y el puerto
+ *  predeterminado del servicio RMI. No obstante, tiene los constructores
+ *  necesarios para iniciar el servicio en cualquier IP y cualquier puerto 
+ *  de escucha del servicio.</div>
+ *
+ *  <div> para ejecutar/obtener el registro RMI se ejecutará el métodos
+ *  refAMiRegRMI(IPHostRegistro,numPuertoRMI), donde IP y puerto son opcionales. 
+ *  Así se obtiene una referencia al registro y construye una URL válida para el
+ *  acceso al mismo.</div>
+ * 
+ * Con licencia GPL v3 (anadir enlace a la licencia)
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ ******************************************************************************/
+public class MiRegistroRMI
+  {
+  /*============================================================================
+    Atributos de la clase
+   ============================================================================*/
+  //anadimos un Logger
+  private static final Logger TRAZA=Logger.getLogger(MiRegistroRMI.class.getName());	
+  //puerto por defecto del registro RMI 1099 
+  private static Integer numPuertoRMI=Registry.REGISTRY_PORT; 
+  //dir IP del registro RMI. Por defecto localhost
+  private static String IPHostRegistro=obtenerIPLocalhost();
+  private static String URLBaseRegRMI=""; //URL base para el registro RMI
+  // si es null significa que no encuentra registro válido  
+  private static Registry registroRMI=null;
+ 
+  
+  /*=========================================================================
+    Metodos publicos  de la clase
+   ==========================================================================*/    
+  /***************************************************************************
+   * Por defecto crea una referencia valida al registro RMI 
+   * en localhost y puerto por defecto 1099
+   ***************************************************************************/
+  public static void refAMiRegRMI()
+    {
+    //llama al metodo principal con los datos por defecto    
+    refAMiRegRMI(IPHostRegistro,numPuertoRMI);//valores por defecto
+    }//fin refAMiRegRMI()
+    
+  /***************************************************************************
+   * Crea una referencia valida al registro RMI en localhost y puerto elegido
+   * llamando al metodo principal 
+   * @param puerto un entero con el numero de puerto
+   **************************************************************************/
+  public static void refAMiRegRMI(Integer puerto)
+    {
+    refAMiRegRMI(IPHostRegistro,puerto);
+    }//fin refAMiRegRMI(puerto)
+  /***************************************************************************
+   * Crea una referencia valida al registro RMI en host elegido y puerto
+   * por defecto llamando al metodo principal
+   * 
+   * @param IP una cadena con una IP valida 
+   **************************************************************************/
+  public static void refAMiRegRMI(String IP)
+    {
+    refAMiRegRMI(IP,numPuertoRMI);
+    }//fin refAMiRegRMI(IP)
+  
+  /***************************************************************************
+   * Crea una referencia y URL valida al registro RMI en host y puerto elegido
+   * Si la IP es la de localhost, comprueba si existe el registro, sino lo 
+   * crea. Si alguno de los parametros esta mal formado, 
+   * deja los atributos en null
+   * 
+   * @param IP una cadena con una IP valida
+   * @param puerto un entero con el numero de puerto
+   *
+   **************************************************************************/
+  public static void refAMiRegRMI(String dirIP,Integer puerto)
+    {
+	//prepara la traza
+	  Handler fileHandler=null;  
+	try
+	  {
+	  fileHandler=new FileHandler("MiRegistroRMI.log");	
+	  
+	  TRAZA.addHandler(fileHandler);
+	  
+		
+	  }//fin try
+	 catch (IOException io)
+	  {
+	  TRAZA.removeHandler(fileHandler);	 
+	  TRAZA.warning("no se pudo guardar el log en disco");	 
+	  }//fin catch
+	  
+	  
+    //parser de IP(InetAddress) y de puerto. null si error
+    
+    //si no hay error, creamos URL y creamos referencia al registro        
+    if((dirIP != null) && (puerto != null))
+      {
+      establecerURLBaseRegRMI(dirIP,puerto.toString());
+      //si estamos en localhost, lo crea o referencia
+      if (dirIP.equals(IPHostRegistro))
+        {
+        // lo primero es crear el registro RMI
+        try
+          {
+          registroRMI =LocateRegistry.createRegistry(puerto);
+          //si no lanza ExportException, no existia, lo ha creado  
+          TRAZA.log(Level.INFO,"No existia registroRMI en localhost. lo crea");
+          }//fin try
+         catch (RemoteException exe)
+          {
+          TRAZA.log(Level.INFO,"Ya existe un registro RMI en localhost. Coge referencia");       
+          try
+            {
+            registroRMI = LocateRegistry.getRegistry(puerto);
+            
+            TRAZA.log(Level.INFO,"Ya existe registro. Referencia al registro creada");
+            }//fin try
+           catch (RemoteException re)
+            {
+            TRAZA.log(Level.SEVERE,"error de registro de objeto : "+ re+"\n");  
+            }//fin catch REmoteException
+           catch (Exception e)
+            {
+            TRAZA.log(Level.SEVERE,"fallo conexión a registro RMI "+ e.toString());  
+            }//fin catch
+          }//fin catch exportexceptiion
+         catch (Exception e)
+          {
+          TRAZA.log(Level.SEVERE,"fallo en registro RMI "+e.toString());
+          }//fin catch generico registro RMI
+        
+        TRAZA.log(Level.INFO,"conexion al registro local satisfactoria");  
+        }//fin si la IP es localhost
+       else
+        { 
+        //si no es la misma IP  comprueba que existe el registro remoto
+    	   
+        try
+          {
+          //obtiene la referencia al registro en la IP y puerto indicado
+          registroRMI = 
+                LocateRegistry.getRegistry(dirIP,puerto);
+          TRAZA.log(Level.INFO,"referencia al registro creada a servidor remoto\n");
+          //probamos conexión con el registro
+          registroRMI.list();
+          //si no lanza excepcion, hay conexion correcta.
+          TRAZA.log(Level.INFO,"Conexion al registro remoto en "+dirIP+":"+
+                             puerto +" satisfactoria");
+          }//fin try
+         catch (RemoteException re)
+          {
+          TRAZA.log(Level.SEVERE,"Error de comunicacion con registroRMI : "+ re+"\n");
+          //registro no disponible, se pone a null para indicar que no funciona
+          registroRMI=null;
+          }//fin catch REmoteException
+         catch (Exception e)
+          {
+          TRAZA.log(Level.SEVERE,"fallo de registro RMI en servidor : "+ e.toString());
+          registroRMI=null;
+          }//fin catch
+        }//fin si no es localhost  
+          
+      }//fin si todo correcto
+     else
+      {
+      //si hay error en el formato de IP o Puerto, atributos por defecto.    
+      TRAZA.log(Level.SEVERE,"error de formato en ip o puerto. Registro no identificado");  
+      }
+     //hay que probar que la referencia es válida 
+    }//fin refAMiRegRMI(ip,puerto)
+     
+  /*======================================================================
+    Metodos publicos
+   * =====================================================================*/    
+  
+  /****************************************************************************
+   *  El metodo refRegistroRMI, obtiene una referencia al registro RMI
+   *  almacenado en el atributo registrRMI.
+   *  
+   *  @return devuelve una referencia al registro remoto; null si no est� activo
+   ****************************************************************************/  
+  public static Registry getRefRegistroRMI()
+    {
+    return registroRMI;  
+    }//fin refREgistroRMI
+  
+  /****************************************************************************
+   *  El metodo getURLRegistroRMI obtiene un String con la URL base del
+   *  registro RMI utilizado
+   *  
+   *  @return devuelve una cadena con la URL; null si no está activo
+   */  
+  public static String getURLBaseRegRMI()
+    {
+    return URLBaseRegRMI;
+    }
+  
+  /********************************************************************************
+   *  El metodo getURLObjetoRegistros, obtiene una cadena con una URL base del 
+   *  registro concatenado al nombre del objeto registrado.
+   *  
+   *  
+   *  @param bind.- recibe una cadena con el nombre simbolico del objeto remoto
+   *                    sin barra separadora.
+   *  @return devuelve una cadena con la referencia completa del objeto remoto 
+   *  en el registro RMI
+   *******************************************************************************/  
+  public static String getURLobjetoRegistrado(String bind)
+    {
+    return URLBaseRegRMI+"/"+bind; 
+    
+    }//fin getURLobjetoRegistrado(String bind)
+
+//métodos registro servicios
+ /******************************************************************************
+   * <div>Método para la gestión del registro RMI.</div>
+   * <div>Se registra el objeto remoto en el directorio, 
+   * al ser este el host que da el servicio de registro RMI
+   * (desde fuera no se puede)</div>
+   * Al ser el primer servicio a registrar, comprueba que no existe, cuyo casi
+   * se lanza AlreadyBoundException para que detecte que ya se est� ejecutando
+   * una instancia del servidor
+   * .
+   * @param objetoRemoto es el objeto a registrar
+   * 
+   *****************************************************************************/ 
+ public static void registrarObjetoRemoto(String bind,Remote servicio)
+ throws RemoteException,AlreadyBoundException
+   {
+   getRefRegistroRMI().bind(bind,servicio);
+   //si error, lanza excepcion
+   }//fin registrServicioDatos  
+  
+  
+  
+  /******************************************************************************
+   * <div>Gestión de los registros en el registro RMI.</div>
+   * <div>Se borra la referencia al objeto remoto en el directorio, al ser este el host
+   * que da el servicio de registro RMI (desde fuera no se puede)</div>
+   * 
+   * @param nombreSimbolico es una cadena con el nombre que tiene asignado el
+   *               objeto en el registro
+   * @return false si hubo problema. 
+   * 
+   *****************************************************************************/  
+   public static Boolean desRegistrarObjetoRemoto(String nombreSimbolico) 
+          throws RemoteException,NotBoundException
+    {
+    Boolean eliminado=false;    
+    getRefRegistroRMI().unbind(nombreSimbolico); 
+    //si no error; caso contrario lanza excepción
+    eliminado=true;
+    return eliminado;  
+    }//fin registrarObjetoRemoto  
+
+  /***************************************************************************
+   *  El metodo obtenerIPLocalhost recupera la dirección IP del host local.
+   *  De esta forma abstraemos a la aplicación del tipo de IP subyacente
+   *  del host.
+   *  
+   *  @return devuelve un String con la dirección IP o null si hubo problema
+  ****************************************************************************/  
+  public static String obtenerIPLocalhost()
+    {
+    String hostIP=null;   
+    try
+      {
+      //primero obtenemos la cadena con la direccion de localhost 
+      //da por supuesto que es la primera disponible--- 
+	  //***OJO CON VARIAS NIC en el mismo host
+      hostIP=InetAddress.getLocalHost().getHostAddress();
+      TRAZA.log(Level.INFO,"la direccion IP local es "+hostIP);
+      }
+     catch (java.net.UnknownHostException he) 
+      {
+      TRAZA.log(Level.SEVERE,"host no encontrado: "+ he.toString());  
+      }//fin catch no se encontro el host con el registro
+    return hostIP; 
+    }//fin obtenerIPLocalhost ()
+
+  /*======================================================================
+    Metodos privados
+   * =====================================================================*/    
+    
+  private static void establecerURLBaseRegRMI(String dirIP,String puerto)
+    {
+    URLBaseRegRMI="rmi://"+dirIP+":"+ puerto;
+    }//fin establecerURLBaseRegRMI
+    
+    
+    
+ }//fin clase RegistroRMI

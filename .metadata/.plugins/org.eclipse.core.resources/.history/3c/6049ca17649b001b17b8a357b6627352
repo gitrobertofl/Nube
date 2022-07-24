@@ -1,0 +1,21 @@
+package pruebas;
+
+public abstract class Base implements InterfaceBase {
+
+	public Base() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void metodo1Base() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public abstract void metodo2abstract() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

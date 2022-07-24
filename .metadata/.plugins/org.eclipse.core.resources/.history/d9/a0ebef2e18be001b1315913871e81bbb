@@ -1,0 +1,27 @@
+package usuario;
+
+public class Cliente2 {
+
+	
+	 private static final String TIPO_USUARIO="repositorio";
+	
+	
+	
+	
+	public Cliente2() {
+		// TODO Auto-generated constructor stub
+		
+				
+		
+	}
+
+	
+	public static void main (String args[])
+	{
+		
+		
+	}
+	
+	
+	
+}

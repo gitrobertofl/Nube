@@ -1,0 +1,10 @@
+package usuario;
+
+public class Repositorio extends Usuario {
+
+	public Repositorio() {
+		
+		// TODO Auto-generated constructor stub
+	}
+
+}

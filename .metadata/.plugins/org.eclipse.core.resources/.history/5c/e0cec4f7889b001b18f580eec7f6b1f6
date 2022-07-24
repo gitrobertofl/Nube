@@ -1,0 +1,270 @@
+package servidor; 
+ 
+
+//import java.util.Vector;
+import java.rmi.*;
+import java.rmi.server.*;
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA DEL OTRO PAQUETE*/
+
+ 
+//import cliente.AcreditacionUsuario;
+import usuario.ServicioDiscoClienteInterface;
+import usuario.ServicioSrOperadorInterface;
+import usuario.ServicioClOperadorInterface;
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS 
+ *
+ * <div>Esta es la interface remota del servicio gestor . Implementa los 
+ * m�todos necesarios para permitir la comunicaci�n del servidor con los 
+ * Clientes remotos</div>
+ *
+ *
+ * <div>Extiende Remote para exportacion RMI</div>
+ * 
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ * 
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20201205
+ * 
+ ********************************************************************************/
+public class ServicioGestorImpl extends UnicastRemoteObject
+                            implements ServicioGestorInterface 
+  {
+  /*==============================================================================
+   * Atributos de la clase
+   ===============================================================================*/ 
+  private static final long serialVersionUID = 123456789L;
+  private ServicioDatosInterface BDRemota;
+  //private NubeRMI registroRMI;
+  
+  //private Vector serviciosClientes=new Vector();
+  //private Vector serviciosRepoSr=new Vector();
+  //private Vector serviciosRepoCl=new Vector();
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/  
+      
+  /**
+   * Constructor por defecto. NO hace nada
+   */
+  public ServicioGestorImpl()throws RemoteException
+    {
+    super();
+    }
+
+  
+  /**
+   * Constructor que recibe como par�metro una referencia v�lida del servicio de 
+   * base de datos remoto, asign�ndola al atributo base de datos de esta clase.
+   * 
+   * @param ServicioDatosInterface servicio de datos
+   * 
+   */  
+  public ServicioGestorImpl(ServicioDatosInterface BD)throws RemoteException
+    {
+    super();
+    this.BDRemota=BD;
+    }
+  
+   //m�todos de registro de servicios 
+  public void registraServiciosRepositorio(String IDRepositorio,
+                                ServicioSrOperadorInterface servicioSrOperador,
+                                ServicioClOperadorInterface servicioClOperador)
+             throws RemoteException,AlreadyBoundException
+     {
+	 MiRegistroRMI.registrarObjetoRemoto(NubeRMI.getBindRepoSr()+IDRepositorio,servicioSrOperador);
+	 MiRegistroRMI.registrarObjetoRemoto(NubeRMI.getBindRepoCl()+IDRepositorio,servicioClOperador);
+	 
+     //registroRMI.registraServiciosRepositorio(IDRepositorio,
+     //                          servicioSrOperador, servicioClOperador);  
+     }
+     
+  public void registraServicioCliente(String IDCliente,
+                                        Remote servicioDiscoCliente)
+              throws RemoteException,AlreadyBoundException
+     {
+	 MiRegistroRMI.registrarObjetoRemoto(NubeRMI.getBindDiscoCliente()+IDCliente,servicioDiscoCliente); 
+     //registroRMI.registraServicioCliente(IDCliente,servicioDiscoCliente);    
+     }         
+  
+  public void desRegistrarServiciosRepositorio(String IDRepositorio)           
+             throws RemoteException,NotBoundException
+    {
+    MiRegistroRMI.desRegistrarObjetoRemoto(NubeRMI.getBindRepoSr()+IDRepositorio);
+    MiRegistroRMI.desRegistrarObjetoRemoto(NubeRMI.getBindRepoCl()+IDRepositorio);
+	
+    }          
+             
+  public void desRegistrarServicioCliente(String IDCliente)
+             throws RemoteException,NotBoundException
+    {
+    MiRegistroRMI.desRegistrarObjetoRemoto(NubeRMI.getBindDiscoCliente()+IDCliente);
+
+    }        
+     
+  /****************************************************************************************************
+   * Obtiene el ID del repositorio del cliente del par�metro
+   * 
+   * @param IDCliente ID del ciente
+   * @return cande con el ID del repositorio
+   * 
+   ***************************************************************************************************/  
+  public String repoAsignadoCliente(String IDCliente)
+         throws RemoteException
+    {
+    return BDRemota.obtenerRepoClie(IDCliente);
+    
+    }//fin repoAsignadoCliente
+    
+  //�no se usa?
+  public Boolean  carpetaClienteEnRepo(String IDCliente, String IDRepoAsignado) throws RemoteException
+    {
+    Boolean resultado=false;    
+    try
+      {
+      resultado=((ServicioSrOperadorInterface)
+                    MiRegistroRMI.getRefRegistroRMI().
+                    lookup(NubeRMI.getBindRepoSr()+IDRepoAsignado)).carpetaParaCliente(IDCliente);
+      //esto lo hace SROperador
+      
+      
+      }
+     catch (Exception e)
+      {
+      System.out.println("fallo gen�rico al obtener referencia srperador(gestor) "+e);
+      System.out.println(e);
+      }//fin catch generico registro RMI
+    return resultado;
+    }//fin carpetaClienteEnRepo  
+   
+  public Boolean existeFichero(String IDCliente, String IDRepo,String nombreFichero)
+        throws RemoteException
+    {
+     return BDRemota.existeFichero(IDCliente,IDRepo,nombreFichero);
+        
+        
+     }// fin public Boolean existeFichero  
+    
+  public Boolean subirFichero(String IDCliente, String IDRepo,String nombreFichero)
+         throws RemoteException
+    {
+    Boolean resultado=false;
+    BDRemota.subirFichero(IDCliente,IDRepo,nombreFichero);    
+        
+    return resultado;
+    }//fin subirfichero
+  
+  public Boolean bajarFichero(String IDCliente, String IDRepo,String nombreFichero) 
+         throws RemoteException
+    {
+    Boolean resultado=false;
+    resultado=BDRemota.bajarFichero(IDCliente,IDRepo,nombreFichero);    
+    //si existe, notifica a repositorio que el cliente quiere su fichero    
+    if (resultado)
+      try
+        {
+        resultado=((ServicioSrOperadorInterface)
+                    MiRegistroRMI.getRefRegistroRMI().lookup(NubeRMI.getBindRepoSr()+IDRepo)).bajarFichero(IDCliente,nombreFichero);
+                
+      
+      }
+     catch (Exception e)
+      {
+      System.out.println("fallo gen�rico al obtener referencia srperador(gestor) "+e);
+      System.out.println(e);
+      }//fin catch generico registro RMI
+    
+    return resultado;
+    }//fin bajarFichero
+    
+    
+    
+  public String getListadoClientesSistema() throws RemoteException
+    {
+    return BDRemota.getListadoClientes();    
+    }
+    
+    
+  public String getListadoClientesRepo(String nickRepositorio)
+         throws RemoteException
+    {
+    return BDRemota.listadoClientesRepo(nickRepositorio);
+    
+    }
+  
+    public String getListadoFicherosCliente(String nickRepositorio, String nickCliente)       
+         throws RemoteException
+      {
+      return BDRemota.getListadoFicherosCliente(nickRepositorio,nickCliente);  
+        
+      }//fin listadoFicheroscliente
+    
+    
+  /**
+   * 
+   * m�todo que 
+   * comprueba si es de cliente o repositorio para ponerlo en uno u otro sitio
+   * 
+   *//*
+  public ServicioClOperadorInterface getRefClOperador(String IDCliente) 
+               throws RemoteException
+    {
+    String IDRepoClie="";
+    ServicioClOperadorInterface srvClOperador=null;//  ****esto dara error si ya error remoto
+    Boolean opOK;
+    
+       
+        //a�ade la referencia al servicio en el vector de clientes
+    //serviciosClientes.add(servicio);
+    
+    //obtiene el id del repositorio asignado al cliente
+    IDRepoClie=BDRemota.obtenerRepoClie(IDCliente);
+    //con el obtiene el servicio CLOPERADOR 
+    try
+      {
+      srvClOperador=(ServicioClOperadorInterface)
+                    registroRMI.getRefRegistroRMI().lookup("Repositorio/CL/"+IDRepoClie);
+      //esto lo hace SROperador
+      //opOK=srvClOperador.carpetaParaCliente(IDCliente);
+      
+      }
+     catch (Exception e)
+      {
+      System.out.println("fallo gen�rico al obtener referencia cloperador(gestor) "+e);
+      System.out.println(e);
+      }//fin catch generico registro RMI
+   
+    
+    //servicioRepo.    (serviciosRepoCl.get(IDRepoClie);
+    return srvClOperador;
+    }//fin suscribirServicio
+    
+  */  
+    
+    
+    
+  /*================================================================================
+     M�todos p�blicos 
+   ================================================================================*/  
+  
+   
+    
+  public String servicioGestor(String mensaje)
+                    throws RemoteException
+    {
+    String msgRetorno="msg desde servidor gestor";
+    System.out.println("mensaje desde gestor para enviar");
+    return msgRetorno;
+    }//fin notificadato
+
+      
+     
+}//fin ServicioGestorImpl

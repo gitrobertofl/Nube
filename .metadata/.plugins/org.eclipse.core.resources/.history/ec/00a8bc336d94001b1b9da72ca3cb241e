@@ -1,0 +1,23 @@
+package usuario;
+
+import servidor.NubeRMI;
+
+public class Repositorio extends Usuario {
+
+	public Repositorio() {
+	 super("repositorio");	
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected void inicioSesionUsuario()
+		
+	  {
+        
+		
+		
+		
+		
+	  }//fin inicioSesionUsuairo
+	
+}

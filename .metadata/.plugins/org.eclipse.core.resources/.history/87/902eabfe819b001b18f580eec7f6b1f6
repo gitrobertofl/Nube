@@ -1,0 +1,19 @@
+package usuario;
+
+public interface GUIClienteInterface
+  {
+
+	
+	
+	public Character menuUsuarioAcreditado(String IDCliente);
+	
+	public String nombreFichero(String IDCliente);
+	
+	public void errorNombreFichero(String IDCliente);
+	
+	public void verListadoClientes(String listado);
+	
+	public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado);
+	
+	
+  }//fin interface GUIClienteInterface

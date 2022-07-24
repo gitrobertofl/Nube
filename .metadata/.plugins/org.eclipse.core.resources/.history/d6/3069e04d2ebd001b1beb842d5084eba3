@@ -1,0 +1,378 @@
+package repositorio;
+
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA AL OTRO PAQUETE*/
+
+import servidor.ServicioGestorInterface;
+import servidor.ServicioAutenticacionInterface; 
+
+import servidor.MiRegistroRMI;
+import servidor.NubeRMI;
+//import servidor.RegObjInterface;
+
+/*FIN INTERFAZ REMOTA*/
+
+import java.rmi.*;
+//import java.rmi.server.*;
+//import java.rmi.registry.Registry;
+//import java.rmi. registry.LocateRegistry;
+//import java.net.*;
+//import java.io.File;
+
+
+import java.io.*;
+
+/******************************************************************************
+ * 
+ * *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21).
+ *
+ * <div>Esta es la clase que representa entidad Repositorio.
+ * 
+ * 
+ * 
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ ******************************************************************************/
+public class Repositorio
+  {
+  //constantes de clase
+  //** Configuraci�n del repositorio
+
+  //variables de clase.   
+  
+  //creamos los objetos proxy con acceso a servicios remotos
+  //private static RegObjInterface registroRMIRemoto; //registro remoto
+  private static ServicioGestorInterface gestor; //servicio gestor en servidor
+  private static ServicioAutenticacionInterface autenticacion; //servicio autenticaci�n en ser
+  
+  //creamos un objeto para el servicio del repositorio para servidor
+  private static ServicioSrOperadorInterface servicioSrOperador;
+  //creamos un objeto para el servicio del repositorio para el cliente
+  private static ServicioClOperadorInterface servicioClOperador;
+  //ID de Sesion
+  private static String IDSesion="";
+  
+  
+      
+  public static void main (String args[])
+    {
+    //=============================================================================
+    // constantes 
+    //=============================================================================
+    
+    //** Configuraci�n del repositorio
+    // DATO IMPORTANTE: la IP del servidor y servicio RMI
+    final String IPHostRegistroRMI=Configuracion.IPHostRegistroRMI;//"localhost";
+    // DATO IMPORTANTE: EL PUERT DE ESCUCHA DEL REGISTRO RMI
+    final Integer puertoRMI=Configuracion.puertoServidorRMI;//1099;
+    // datos proxy objeto remoto para registro repositorio
+    //final String bindRegObj=Configuracion.bindRegObj;//"servidor/regobj";
+    //datos proxy local. el Repositorio del servidor.Servicios: gestor y autenticacion
+    //final String bindGestor=Configuracion.bindGestor;//"servidor/gestor"; 
+    //final String bindAutenticacion=Configuracion.bindAutenticacion;//"servidor/autenticacion";
+    
+    
+    
+    //=============================================================================
+    //variables 
+    //=============================================================================
+    
+    
+    //=============================================================================
+    // ejecucion 
+    //=============================================================================
+    //carga del gestor de seguridad
+    
+    
+    //System.setSecurityManager(new RMISecurityManager( ));
+    
+        
+        
+    //RegistroRMI servicioRMI=new RegistroRMI(IPHostRegistroRMI,puertoRMI);
+    //NubeRMI servicioRMI=new NubeRMI(IPHostRegistroRMI,puertoRMI);
+     MiRegistroRMI.refAMiRegRMI(IPHostRegistroRMI,puertoRMI);
+    //visualizaci�n IU
+    GUIRepositorioInterface GUI = new GUIRepositorioTexto(); 
+    //comprobamos que no haya fallado la referencia a registro (null)=error
+    if (MiRegistroRMI.getRefRegistroRMI()==null)
+      {
+      GUI.errorRegistroRMI();
+      }//fin si registro no existe
+     else
+      {
+      //si no hubo error de conexi�n con el registro
+      try
+        {
+        //inicializamos el proxy objeto remoto de registro de objetos remotos desde otro host
+        //registroRMIRemoto=(RegObjInterface) servicioRMI.getRefRegistroRMI().lookup(bindRegObj);
+        //inicializamos los objetos proxy con acceso a servicios remotos
+        gestor=NubeRMI.obtenerRefSvrGestor();
+        //(ServicioGestorInterface)servicioRMI.getRefRegistroRMI().lookup(bindGestor);
+        autenticacion=NubeRMI.obtenerRefSvrAutenticacion();
+        //  (ServicioAutenticacionInterface)servicioRMI.getRefRegistroRMI().lookup(bindAutenticacion);
+        //no creamos los servicios para servidor y cliente hasta que se autentifique
+             
+        
+        /*ZONA PRUEBAS*/
+        
+        
+        //no error de registro ni de proxy a Servidor
+        System.out.println("MSG:no error de registro ni de proxy a servidor:reg, aut y gestor");
+        
+        
+        //si no hubo error, servicios registrados
+        System.out.println("MSG:Registrados los servicios\n");
+        //una vez montada la estructura distribuida, ver pantalla. 
+      
+          
+      
+        
+        
+        /*FIN ZONA PRUEBAS*/
+        
+        
+      
+        //una vez montado el esquema remoto, iniciamos el menu principal
+        menuInicio(GUI);
+       
+      
+        }//fin try main
+       catch (RemoteException re)
+        {
+         GUI.errorAccesoRemotoObjeto(re.toString());  
+        }//fin catch REmoteException
+       catch (NotBoundException be)
+        {
+        GUI.errorNoEncuentraObjRemoto(be.toString());  
+        }//fin catchnotboundException
+       catch (Exception e)
+        {
+        GUI.errorGenerico(e.toString());  
+        }//fin catch
+      
+      }//fin else no error registro rmi
+    
+    System.exit(0); 
+    }//fin del main   
+  /**
+   * Este metodo realiza la logica de autenticacion del Repositorio:
+   * operaci�n 1.- alta de Repositorio
+   * operaci�n 2.- autenticaci�n de Repositorio
+   * operaci�n 3.- Salir del programa
+   * 
+   * @param Se le pasa la referencia al intarfaz de usuario
+   * 
+   */  
+    
+  public static void menuInicio(GUIRepositorioInterface GUI)
+    {
+    //opcion de menu 
+    Character opcion='0';
+    
+    //creamos una acreditacion de Repositorio
+    AcreditacionRepositorio acreditacionRepositorio;
+    try
+      {
+      do
+        {
+        //capturamos la operaci�n a realizar desde el GUI    
+        opcion=GUI.menuInicioRepositorio();
+        switch (opcion)
+          {
+          case '1'://ALTA Repositorio
+                    //obtenemos nick y contrase�a por teclado  
+                    acreditacionRepositorio=GUI.login(opcion);
+                    //llama al servicio de autentificaci�n:alta de Repositorio
+                    
+                     //hacer con captura de errores de java. es m�s elegante
+                    //entonces: 
+                    // si true: alta correcta
+                    // si false: error
+                    
+                    
+                    if (autenticacion.altaUsuario(acreditacionRepositorio.getNombre(),
+                                                        acreditacionRepositorio.getPassword(),"repositorio"))
+                      {
+                      //excepcion
+                      GUI.altaRepositorioCorrecta();  
+                      }
+                     else
+                      GUI.errorAcreditacion(opcion);  
+                    //como permite m�s altas, no se registra el obj remoto. En alta no hace falta registrar
+                    //vuelve al menu de inicio (no entra directamente)
+                    opcion='0';
+                    break;
+           case '2'://inicio sesion
+                    //obtenemos nick y contrase�a por teclado  
+                    acreditacionRepositorio=GUI.login(opcion);
+                    //llama al servicio de autentificaci�n de repositorio
+                    //no permite dos sesiones
+                     //hacer con captura de errores de java. es m�s elegante
+                    //entonces: 
+                    // si cadena true: alta correcta
+                    // si "": error
+                    IDSesion= autenticacion.autenticarUsuario(acreditacionRepositorio.getNombre(),
+                                                        acreditacionRepositorio.getPassword(),"repositorio");
+                    if (!IDSesion.equals(""))
+                      {
+                      //est� acreditado: obtener y marcar como activo y registrarlo en RMI
+                      servicioSrOperador=new ServicioSrOperadorImpl(acreditacionRepositorio.getNombre());
+                      servicioClOperador=new ServicioClOperadorImpl(acreditacionRepositorio.getNombre());
+                    
+                    
+                      System.out.println("hemos creado el objeto sr "+ servicioSrOperador.getNickRepositorio());
+                      System.out.println("hemos creado el objeto cl "+ servicioClOperador.getNickRepositorio());
+                      
+                      // los registra en RMI. con gestor, NubeRMI no puede al ser otro host
+                      gestor.registraServiciosRepositorio(acreditacionRepositorio.getNombre(),
+                                                servicioSrOperador,servicioClOperador); 
+                      
+                      /*
+                      registroRMIRemoto.registrarObjetoRemoto
+                             //"Repositorio/SR/"
+                            (Configuracion.bindRepoSr+servicioSrOperador.getNickRepositorio(),servicioSrOperador);
+                      registroRMIRemoto.registrarObjetoRemoto
+                             //"Repositorio/CL/"
+                            (Configuracion.bindRepoCl+servicioClOperador.getNickRepositorio(),servicioClOperador);
+                      */      
+                      //entramos en menu repositorio acreditado
+                      menuRepositorio(GUI,acreditacionRepositorio.getNombre());
+                      //como vamos a salir, marcamos como repositorio inactivo, 
+                      //�y si tiene un cliente enganchado? avisar o no hacerlo
+                      autenticacion.desactivarUsuario(acreditacionRepositorio.getNombre(),"repositorio");
+                      // desregistramos los servicios de RMI
+                      gestor.desRegistrarServiciosRepositorio(acreditacionRepositorio.getNombre());
+                      /*
+                      registroRMIRemoto.desRegistrarObjetoRemoto
+                        //"Repositorio/SR/"
+                        (Configuracion.bindRepoSr+servicioSrOperador.getNickRepositorio());
+                      registroRMIRemoto.desRegistrarObjetoRemoto
+                        //"Repositorio/CL/"
+                        (Configuracion.bindRepoCl+servicioClOperador.getNickRepositorio());
+                      */  
+                      }
+                     else
+                      GUI.errorAcreditacion(opcion);  
+                    
+                    
+                    //vuelve al menu de inicio
+                    opcion='0'; 
+                    break;
+           case '3'://salir
+                    //pantalla informativa fin
+                    GUI.finDePrograma(); 
+                    break;
+           default :System.out.print("opcion erronea");   
+          }//fin switch
+        }
+      while(opcion!='3');
+      }//fin try main
+     catch (RemoteException re)
+      {
+      GUI.errorAccesoRemotoObjeto(re.toString());  
+      }//fin catch REmoteException
+     catch (AlreadyBoundException re)
+       {
+       System.err.println("ya existe el objeto enRMI o: gui"); 
+       }
+      
+     catch (NotBoundException re)
+       {
+       GUI.errorNoEncuentraObjRemoto(re.toString()); 
+        }
+      catch (Exception e)
+      {
+       GUI.errorGenerico(e.toString());  
+      }//fin catch
+    }//fin menuInicio
+  
+    
+    
+  public static void pruebaFichero()
+     {
+     Fichero f=new Fichero("README.TXT", "cliente2");   
+     System.out.println("se a a�adido un objeto fichero nombre "+f.obtenerNombre()+
+       "propietario "+f.obtenerPropietario()+" y un tama�o de "+f.obtenerPeso()+" bytes");
+     File salida=new File("PRUEBA.TXT");
+         try {
+     
+      OutputStream outputStream = new FileOutputStream(salida);
+      f.escribirEn(outputStream);
+      
+      
+      
+    } catch (FileNotFoundException e) {
+      System.out.println("Fichero no encontrado");
+    } 
+     
+    
+     
+     
+      }
+    
+    
+    
+  public static void menuRepositorio(GUIRepositorioInterface GUI,String nickRepositorio)
+    {
+    //opcion de menu
+    Character opcion='0';
+    
+    String nickCliente="";
+    
+    try
+      {
+      do
+          {
+          opcion=GUI.menuRepositorioAcreditado(nickRepositorio);
+          
+          System.out.println("opcion devuelta es "+opcion);
+          
+          switch (opcion)
+           {
+           case '1'://listar clientes
+                    GUI.verListadoClientes(nickRepositorio,gestor.getListadoClientesRepo(nickRepositorio));
+                    //vuelve al menu de inicio de repositorio
+                    opcion='0';
+                    break;
+           case '2'://listar ficheros de cliente
+                    //obtenemos nombre de cliente por consola y con �l visualizamos el listado
+                    
+                    
+                    
+                    GUI.verListadoFicherosCliente(nickRepositorio,
+                                                  GUI.obtenerIDCliente(nickRepositorio),
+                                                  gestor.getListadoFicherosCliente(nickRepositorio,nickCliente));
+                    
+                    //vuelve al menu de inicio de repositorio
+                    opcion='0'; 
+                    break;
+           case '3'://cerrar sesi�n de Repositorio (logout)
+                    //no hace nada pues ya cierra el menu inicial los obj. remotos 
+                    break;
+           default :System.out.print("opcion erronea");   
+           }//fin switch
+       
+          }
+        while(opcion!='3');
+      
+      
+        }//fin try main
+       catch (RemoteException re)
+        {
+        GUI.errorAccesoRemotoObjeto(re.toString()); 
+        }//fin catch REmoteException
+        catch (Exception e)
+        {
+         GUI.errorGenerico(e.toString());
+        
+        }//fin catch
+    
+    }//fin menu de juego
+    
+    
+  }//fin clase Repositorio

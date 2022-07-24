@@ -1,0 +1,42 @@
+package usuario;
+
+import java.rmi.*;
+
+/******************************************************************************
+ * 
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ * <div>Este es un servicio del Cliente.</div>
+ * <div>Será utilizado por el servicio Servidor-Operador del repositorio para
+ * descargar al disco duro local del cliente el fichero que este 
+ * considere oportuno.</div>
+ * 
+ * 
+ * @author Roberto J. de la Fuente Lopez
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20210422
+ ******************************************************************************/
+
+public interface ServicioDiscoClienteInterface extends Remote 
+  {
+  //métodos get-set IDCliente
+  public void setIDCliente(String nombre)throws RemoteException;
+  
+  public String getIDCliente() throws RemoteException;
+  
+  /**********************************************************************************
+   * Metodo remoto que recibe como parametros el fichero a bajar
+   * El fichero se escribe en la carpeta local del cliente iDCliente.
+   * 
+   * @param fichero a bajar
+   * 
+   * @return Si no hubo problema, true, y false en caso contrario
+   *********************************************************************************/ 
+  
+  public Boolean bajarFichero(Fichero fichero) throws RemoteException;
+   
+  
+  
+  }//FIN interface ServicioDiscoCliente

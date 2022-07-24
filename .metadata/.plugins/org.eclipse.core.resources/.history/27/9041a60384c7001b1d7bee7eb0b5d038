@@ -1,0 +1,141 @@
+package usuario; 
+
+import java.util.Scanner;
+//import java.util.Vector;
+//import java.io.*;
+/********************************************************************************
+ * Esta clase va a implementar el interface del entorno de usuario en modo 
+ * consola. 
+ * Contiene los m�todos para la visualizaci�n de cada men�
+ * 
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ *********************************************************************************/
+public class GUIRepositorioTexto extends GUIUsuarioTexto implements GUIRepositorioInterface
+  {
+      
+      
+      
+  /**
+    * Constructor por defecto. no hace nada
+   */
+  public GUIRepositorioTexto()
+    {
+    
+    }
+  public GUIRepositorioTexto(String tipo)
+    {
+    super(tipo);
+    }
+    
+    
+   
+  /**
+   * Se visualiza el menu del repositorio una vez acreditado.
+   * 
+   * @param obtiene el ID del repostitorio
+   * @return devuelve el primer caracter pulsado con numero que se pulsa (u otra cosa)
+   * o 'n' si intro
+   */ 
+  public Character menuUsuarioAcreditado(String IDUsuario)
+    {
+	@SuppressWarnings("resource")//para no cerrar Scanner 
+    Scanner teclado=new Scanner(System.in);
+    Character tecla='0'; //captura la primera tecla pulsada
+    String cadenaEntrada="";//para capturar la entrada
+    //limites de opcion
+    char opcionInicial='1';
+    char opcionFinal='3';
+    verCabecera(); 
+    System.out.println("        ALMCENAMIENTO EN LA NUBE");
+    System.out.println("         "+tipoUsuario+" : "+IDUsuario);
+    System.out.println();
+    System.out.println(" 1 - Listar clientes");
+    System.out.println(" 2 - Listar ficheros del cliente");
+    System.out.println(" 3 - Salir");
+    System.out.println("");
+    System.out.println("Pulsar una opcion y despues intro. Si es erronea volvera a este menu");
+    System.out.print("opcion elegida : ");
+    cadenaEntrada=teclado.nextLine();
+    //si solo se pulsa intro, la cadena esta vacia, por lo que hay que volver a imprimir
+    if ((cadenaEntrada.length()==0) ||
+           ((cadenaEntrada.charAt(0)<opcionInicial)&&(cadenaEntrada.charAt(0)>opcionFinal)))
+      {
+      tecla='n';   
+      }//fin si entrada vacia
+     else
+      {
+      tecla=cadenaEntrada.charAt(0);   
+      }
+    
+    return tecla;
+    }//fin menuRepositorioAcreditado
+  
+
+ 
+   public String obtenerIDCliente(String IDRepositorio)
+     {
+	 @SuppressWarnings("resource")//para no cerrar Scanner  
+     Scanner teclado=new Scanner(System.in);
+     String cadenaEntrada="";//para capturar la entrada
+     limpiarPantalla();
+     //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Repositorio : "+IDRepositorio);
+     System.out.println("           Listado de ficheros del cliente ");
+     System.out.println("");
+          
+      System.out.print("Introduce el nombre de Cliente de este repositorio : ");
+      cadenaEntrada=teclado.nextLine();    
+      //si es solo intro repite 
+      
+     //fin repetir hasta que Repositorio sea algo
+     if (cadenaEntrada.length()==0) cadenaEntrada="";  
+    return cadenaEntrada;    
+    }//fin obtenerIDCliente
+ 
+     
+    
+   public void verListadoClientes(String IDRepo, String listado) 
+     {
+      limpiarPantalla();
+     //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Listado de clientes en repositorio "+IDRepo);
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre de cliente   ");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();     
+        
+     }//fin verListadoClientes 
+    
+   public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado)
+     {
+     limpiarPantalla();
+     //obtenemos el id del cliente por consola 
+      
+      
+      //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Repositorio : "+IDRepositorio);
+     System.out.println("           Listado de ficheros del cliente "+IDCliente);
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre de fichero   ");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+        
+     }//fin verListadoFicheroscliente
+     
+
+     
+     
+     
+}//fin clase GUIRepositorioTexto

@@ -1,0 +1,14 @@
+package usuario;
+
+public class Repositorio extends Usuario {
+
+	public Repositorio() {
+	 super("cliente");	
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	protected void inicioUsuario()
+	  {}
+	
+}

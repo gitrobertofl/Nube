@@ -1,0 +1,22 @@
+package usuario;
+
+public interface GUIRepositorioInterface
+  {
+
+	/**
+	  * 
+	  * 
+	  * @param IDRepositorio
+	  * @return
+	  */
+	   public String obtenerIDCliente(String IDRepositorio);
+	   
+	   public void verListadoClientes(String IDRepo, String listado);
+	   
+
+	    
+	   public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado)
+	    ;
+	
+	
+  }//fin GUIRepositorioInterface

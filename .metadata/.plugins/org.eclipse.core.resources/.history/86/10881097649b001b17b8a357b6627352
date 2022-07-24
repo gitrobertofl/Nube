@@ -1,0 +1,29 @@
+package pruebas;
+
+public class Prueba {
+
+	public Prueba() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		
+		InterfaceBase ultima=new Ultima();
+		Ultima ul2=(Interface2)ultima;
+		//ultima=ul2;
+		ultima.metodo1Base();
+	    ultima.metodo2abstract();
+	    //ultima.metodo3ultima();
+		ul2.metod1Interface2();
+		ul2.metodo1Base();
+		
+		
+		// TODO Auto-generated method stub
+
+	}
+
+	
+	
+	
+	
+}

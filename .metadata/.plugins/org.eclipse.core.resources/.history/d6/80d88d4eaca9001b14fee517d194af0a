@@ -1,0 +1,95 @@
+package servidor; 
+import java.rmi.*;
+//import java.util.Vector;
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA DEL OTRO PAQUETE*/
+
+//import basededatos.ServicioDatosInterface; 
+//import Cliente.AcreditacionUsuario;
+
+
+// import usuario.ServicioDiscoClienteInterface;
+
+//import usuario.ServicioSrOperadorInterface;
+//import usuario.ServicioClOperadorInterface;
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS 
+ *
+ * <div>Esta es la interface remota del servicio gestor . Implementa los 
+ * m�todos necesarios para permitir la comunicaci�n del servidor con los 
+ * Clientes y repositorios remotos</div>
+ *
+ *
+ * <div>Extiende Remote para exportacion RMI</div>
+ * 
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ * 
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20201205
+ * 
+ ********************************************************************************/
+
+public interface ServicioGestorInterface extends Remote
+  {
+  public void registraServiciosRepositorio(String IDRepositorio,
+                                Remote servicioSrOperador,
+                                Remote servicioClOperador)
+             throws RemoteException,AlreadyBoundException;
+  
+  public void registraServicioCliente(String IDCliente,
+                                Remote servicioDiscoCliente)
+             throws RemoteException,AlreadyBoundException;    
+  
+  public void desRegistrarServiciosRepositorio(String IDRepositorio)           
+             throws RemoteException,NotBoundException;
+             
+  public void desRegistrarServicioCliente(String IDCliente)
+             throws RemoteException,NotBoundException;
+      
+  public String repoAsignadoCliente(String IDCliente)
+         throws RemoteException;    
+      
+  public Boolean existeFichero(String IDCliente, String IDRepo,String nombreFichero)
+        throws RemoteException;       
+         
+  public Boolean  carpetaClienteEnRepo(String IDCliente, String IDRepoAsignado)
+         throws RemoteException,NotBoundException    ;
+  
+  public Boolean subirFichero(String IDCliente, String IDRepo,String nombreFichero) 
+         throws RemoteException;
+  
+         
+  public Boolean bajarFichero(String IDCliente, String IDRepo,String nombreFichero) 
+         throws RemoteException,NotBoundException; 
+         
+  public Boolean borrarFichero(String iDCliente, String iDRepo,String nombreFichero) 
+	         throws RemoteException;
+  
+  
+  public String getListadoClientesSistema() throws RemoteException;       
+         
+  public String getListadoClientesRepo(String nickRepositorio)
+         throws RemoteException;
+  
+  public String getListadoFicherosCliente(String nickRepositorio, String nickCliente)       
+         throws RemoteException;
+  /**
+   * 
+   * m�todo que registra servicio
+   * comprueba si es de cliente o repositorio para ponerlo en uno u otro sitio
+   * 
+   *//*
+  public ServicioClOperadorInterface getRefClOperador(String IDCliente) 
+               throws RemoteException;    
+    */  
+    //prueba            
+  public String servicioGestor(String mensaje) throws RemoteException;
+      
+      
+  }//fin interface ServicioGestorInterface

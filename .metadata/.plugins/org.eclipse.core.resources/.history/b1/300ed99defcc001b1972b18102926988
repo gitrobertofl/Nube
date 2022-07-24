@@ -1,0 +1,35 @@
+package usuario;
+
+/********************************************************************************
+ * <div>Esta clase va a implementar el interface del entorno de repositorio
+ * en modo consola.</div> 
+ * <div>Contiene los metodos para la visualizacion de cada menu</div>
+ *
+ * Con licencia GPL v3
+ *
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ *********************************************************************************/
+public interface GUIRepositorioInterface
+  {
+
+	 
+	/**
+	  * 
+	  * 
+	  * @param IDRepositorio
+	  * @return
+	  */
+	   public String obtenerIDCliente(String IDRepositorio);
+	   
+	   public void verListadoClientes(String IDRepositorio, String listado);
+	   
+
+	    
+	   public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado)
+	    ;
+	
+	
+  }//fin GUIRepositorioInterface

@@ -1,0 +1,92 @@
+package usuario; 
+
+//import java.util.Scanner;
+//import java.util.Vector;
+//import java.io.*;
+/********************************************************************************
+ * Esta clase va a implementar el interface del entorno de usuario en modo 
+ * consola. 
+ * Contiene los m�todos para la visualizaci�n de cada men�
+ * 
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ *********************************************************************************/
+public interface GUIUsuarioInterface
+  {
+  
+  /**
+   * Este mtodeo visualiza el menu inicial del Repositorio
+   * 
+   * @return devuelve el primer caracter pulsado con numero que se pulsa
+   * o 'n' si intro u otra cosa    
+   */
+  public Character menuInicio(); 
+    
+  
+  /**
+   * Se visualiza el menu del usuario, según corresponda una vez acreditado.
+   * 
+   * @param obtiene el ID del usuario
+   * @return devuelve el primer caracter pulsado con numero que se pulsa (u otra cosa)
+   * o 'n' si intro
+   */ 
+  public Character menuUsuarioAcreditado(String IDUsuario);
+  
+  
+  
+  /**
+   * Visualiza mensaje de repositorio registrado correctamente
+   * 
+   */  
+  public void altaUsuarioCorrecta();
+   
+ 
+  /*
+   * Visualiza mensaje de error en registro/autenticaci�n repositorio:
+   * @param si tipoLogin=1, es el registro, si es =2 es autentificar
+   */  
+    
+  public void errorAcreditacion(Character tipoLogin);
+   
+    
+   /**
+    *  Visualiza la obtenci�n de nombre de repositorio y contrase�a
+    *  no se permiten nombre de Repositorio en blanco;contrase�a s�.
+    *  @param si tipoLogin=1, es el registro, si es =2 es autentificar
+    */
+  public AcreditacionUsuario login(Character tipoLogin);  
+     
+ 
+  /**
+   * Visualiza un mensaje de fin de programa 
+   * 
+   * @param el tipo de usuario para indicarlo
+   */
+ 
+   public void finDePrograma(String programa);
+   
+     
+    
+   
+     
+   //errores  
+   public void errorRegistroRMI() 
+    ;
+     
+    public void errorAccesoRemotoObjeto(String en) 
+    ;
+     
+   public void errorNoEncuentraObjRemoto(String er)
+    ;
+   public void errorGenerico(String en)
+     ;
+  
+     
+   
+     
+     
+}//fin clase GUIUsuarioInterface

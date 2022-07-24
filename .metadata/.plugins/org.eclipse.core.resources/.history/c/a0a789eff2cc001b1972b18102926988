@@ -1,0 +1,82 @@
+package usuario;
+
+/********************************************************************************
+ * <div>Esta clase va a implementar el interface del cliente en modo 
+ * consola.</div> 
+ * <div>Contiene los metodos para la visualizacion de cada menu</div>
+
+ * Con licencia GPL v3
+ *
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ *********************************************************************************/
+public interface GUIClienteInterface
+  {
+ /********************************************************************************
+  * <div> Este metodo captura si el fichero que se va a bajar es propio o no.</div>
+  * 
+  * @param iDCliente el correspondiente al cliente en ejecucion.
+  * @return un caracter S, s, N, n 
+  *  
+  *******************************************************************************/
+  public Character esFicheroPropio(String iDCliente);
+	
+  /********************************************************************************
+   * <div> Este metodo captura el id del cliente propietario del fichero compartido
+   * que se quiere bajaro</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   * @return cadena introducida (si intro, cadena vacia)
+   *  
+   *******************************************************************************/
+  public String nombrePropietario(String iDCliente);
+	
+  /********************************************************************************
+   * <div> Este metodo captura el nombre del fichero que se quiere subir/bajar</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   * @return cadena introducida (si intro, cadena vacia)
+   *  
+   *******************************************************************************/
+  public String nombreFichero(String iDCliente);
+
+  //avisos
+  /********************************************************************************
+   * <div> pantalla de aviso para el repositorio no activo</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   *  
+   *******************************************************************************/
+  public void avisoRepoNoActivo(String iDCliente);
+
+  /********************************************************************************
+   * <div> pantalla de aviso de bajada de fichero para el repositorio no activo</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   *  
+   *******************************************************************************/
+  public void avisoBajadaFichero(String iDCliente, String iDClienteComp, String nombreFichero);
+  
+  //errores
+  
+	public void errorNombreFichero(String iDCliente);
+	
+	public void errorFicheroNoExiste (String iDCliente);
+	
+	public void errorFicheroRepe (String iDCliente);
+	
+	public void errorBajadaFichero(String iDCliente);
+	
+//listados
+	
+	
+	public void verListadoClientes(String listado);
+	
+	public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado);
+	
+	
+	
+	
+  }//fin interface GUIClienteInterface

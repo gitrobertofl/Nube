@@ -1,0 +1,146 @@
+
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+import java.rmi.server.*;
+import java.io.*;
+
+
+
+
+/******************************************************************************
+ * 
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ * <div>Este es un servicio del Cliente.</div>
+ * <div>Será utilizado por el servicio Servidor-Operador del repositorio para
+ * descargar al disco duro local del cliente el fichero que este 
+ * considere oportuno.</div>
+ * 
+ * 
+ * @author Roberto J. de la Fuente Lopez
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20210422
+ ******************************************************************************/
+public class ServicioDiscoClienteImpl extends UnicastRemoteObject
+                            implements ServicioDiscoClienteInterface
+  {
+  /*===========================================================================
+    Atributos de la clase
+   ==========================================================================*/ 
+  private static final long serialVersionUID = 123456789L;	
+	
+  private String iDCliente;//nombre que identifica este Cliente
+ 
+   
+  /*===========================================================================
+     Constructores de la clase
+  ===========================================================================*/ 
+
+  /**
+   * Constructor por defecto. Solo llamada para Remote
+   */
+  public ServicioDiscoClienteImpl() throws RemoteException
+    {
+    super();
+    }
+
+  /**
+   * Se inicializa el iDcliente por parametro
+   * 
+   * @param Una String con el nombre del cliente
+   */
+  public ServicioDiscoClienteImpl(String nombre) throws RemoteException
+    {
+    super();
+    
+    this.iDCliente=nombre;
+    }
+    
+  
+  
+  
+  
+ //?
+  public void setRespondidoAut(Boolean flag) throws RemoteException
+    {
+    respondidoAut=flag;
+    
+    }
+  
+    //?
+  public void setAutorizado(Boolean flag)throws RemoteException
+    {
+    autorizado=flag;
+    
+    }
+      
+  public void setNicCliente(String nombre)throws RemoteException
+    {
+    iDCliente=nombre;  
+    }
+  //?    
+  public Boolean getRespondidoAut()throws RemoteException
+    {
+    return respondidoAut;
+    }
+  
+ //?   
+  public Boolean getAutorizado()throws RemoteException
+    {
+    return autorizado;
+    }
+    
+  
+  public String getNickCliente() throws RemoteException   
+    {
+    return iDCliente;
+    }  
+  
+  
+  public Boolean bajarFichero(Fichero fichero) throws RemoteException
+  
+    {
+	Boolean resultado=false;  
+	  System.out.println("se ha anadido un objeto fichero nombre "+fichero.obtenerNombre()+
+       "propietario "+fichero.obtenerPropietario()+" y un tama�o de "+fichero.obtenerPeso()+" bytes");
+     File salida=new File(this.iDCliente+"//"+fichero.obtenerNombre());
+         try {
+     
+      OutputStream outputStream = new FileOutputStream(salida);
+      resultado=fichero.escribirEn(outputStream);
+      
+      
+      
+    } catch (FileNotFoundException e) {
+      System.out.println("Fichero no encontrado");
+    } 
+    
+	  
+	  
+	  
+	  
+	  
+    return resultado;	  
+    }//fin bajar fichero
+  
+  
+  
+  
+ //?
+    
+      public String msgServicioDiscoCliente(String mensaje)
+                    throws RemoteException
+     {
+       String msgRetorno="msg desde servicio de disco en cliente";
+      System.out.println("msg desde servicio de disco en cliente");
+      return msgRetorno;
+      
+      }//fin setConfTablero el tablero
+              
+      
+     
+      
+}//fin clase CallBackJugdorImpl

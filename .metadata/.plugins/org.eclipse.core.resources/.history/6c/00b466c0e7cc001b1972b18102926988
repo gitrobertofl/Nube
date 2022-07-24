@@ -1,0 +1,40 @@
+package usuario;
+
+
+
+/******************************************************************************
+ * 
+ * 
+ * Clase ejecutora de repositorio.
+ * Utiliza la clase Usuario para llamar a la parte de repositorio (herencia)
+ * 
+ * 
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Repositorio
+  {
+  private static final String TIPO_USUARIO="repositorio";
+  
+  
+  
+  public static void main (String args[])
+    {
+	//gestor de seguridad
+    Usuario usuario;
+    usuario = new UsrRepositorio();
+	if (usuario.getConectadoConSRV())
+	  //una vez montado el esquema remoto, iniciamos el menu principal
+	  usuario.menuUsuario();    
+	 else
+   	  {	 
+	  GUIUsuarioInterface gUI = new GUIClienteTexto(TIPO_USUARIO);	 
+      gUI.finDePrograma();		 
+	  }
+    //termina todo  
+ 	System.exit(0); 
+		
+	}//fin del main
+  	  
+  }//fin clase repositorio

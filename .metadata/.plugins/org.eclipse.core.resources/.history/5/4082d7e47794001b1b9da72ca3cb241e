@@ -1,0 +1,127 @@
+package usuario;
+
+import java.rmi.RemoteException;
+
+import repositorio.GUIRepositorioInterface;
+import repositorio.ServicioClOperadorImpl;
+import repositorio.ServicioClOperadorInterface;
+import repositorio.ServicioSrOperadorImpl;
+import repositorio.ServicioSrOperadorInterface;
+import servidor.NubeRMI;
+
+public class Repositorio extends Usuario {
+  //variables de instancia
+  //creamos un objeto para el servicio del repositorio para servidor
+  private ServicioSrOperadorInterface servicioSrOperador;
+  //creamos un objeto para el servicio del repositorio para el cliente
+  private ServicioClOperadorInterface servicioClOperador;
+	
+	
+  public Repositorio()
+	{
+	super(TIPO_REPOSITORIO);	
+	}//FIN CONSTRUCTOR Repositorio()
+
+	@Override
+	protected void inicioSesionUsuario(String iDRepositorio)
+		
+	  {
+		//esta acreditado: obtener y marcar como activo y registrarlo en RMI
+        servicioSrOperador=new ServicioSrOperadorImpl(iDRepositorio);
+        servicioClOperador=new ServicioClOperadorImpl(iDRepositorio);
+      
+      
+        System.out.println("hemos creado el objeto sr "+ servicioSrOperador.getNickRepositorio());
+        System.out.println("hemos creado el objeto cl "+ servicioClOperador.getNickRepositorio());
+        
+        // los registra en RMI. con gestor, NubeRMI no puede al ser otro host
+        gestor.registraServiciosRepositorio(iDRepositorio,servicioSrOperador,servicioClOperador); 
+        
+        /*
+        registroRMIRemoto.registrarObjetoRemoto
+               //"Repositorio/SR/"
+              (Configuracion.bindRepoSr+servicioSrOperador.getNickRepositorio(),servicioSrOperador);
+        registroRMIRemoto.registrarObjetoRemoto
+               //"Repositorio/CL/"
+              (Configuracion.bindRepoCl+servicioClOperador.getNickRepositorio(),servicioClOperador);
+        */      
+        //entramos en menu repositorio acreditado
+        menuRepositorio(GUI,iDRepositorio);
+        //como vamos a salir, marcamos como repositorio inactivo, 
+        //�y si tiene un cliente enganchado? avisar o no hacerlo
+        autenticacion.desactivarRepositorio(iDRepositorio);
+        // desregistramos los servicios de RMI
+        gestor.desRegistrarServiciosRepositorio(iDRepositorio);
+        /*
+        registroRMIRemoto.desRegistrarObjetoRemoto
+          //"Repositorio/SR/"
+          (Configuracion.bindRepoSr+servicioSrOperador.getNickRepositorio());
+        registroRMIRemoto.desRegistrarObjetoRemoto
+          //"Repositorio/CL/"
+          (Configuracion.bindRepoCl+servicioClOperador.getNickRepositorio());
+        */ 
+		
+		
+		
+		
+	  }//fin inicioSesionUsuairo
+	
+	public static void menuRepositorio(GUIRepositorioInterface GUI,String nickRepositorio)
+    {
+    //opcion de menu
+    Character opcion='0';
+    
+    String nickCliente="";
+    
+    try
+      {
+      do
+          {
+          opcion=GUI.menuRepositorioAcreditado(nickRepositorio);
+          
+          System.out.println("opcion devuelta es "+opcion);
+          
+          switch (opcion)
+           {
+           case '1'://listar clientes
+                    GUI.verListadoClientes(nickRepositorio,gestor.getListadoClientesRepo(nickRepositorio));
+                    //vuelve al menu de inicio de repositorio
+                    opcion='0';
+                    break;
+           case '2'://listar ficheros de cliente
+                    //obtenemos nombre de cliente por consola y con �l visualizamos el listado
+                    
+                    
+                    
+                    GUI.verListadoFicherosCliente(nickRepositorio,
+                                                  GUI.obtenerIDCliente(nickRepositorio),
+                                                  gestor.getListadoFicherosCliente(nickRepositorio,nickCliente));
+                    
+                    //vuelve al menu de inicio de repositorio
+                    opcion='0'; 
+                    break;
+           case '3'://cerrar sesi�n de Repositorio (logout)
+                    //no hace nada pues ya cierra el menu inicial los obj. remotos 
+                    break;
+           default :System.out.print("opcion erronea");   
+           }//fin switch
+       
+          }
+        while(opcion!='3');
+      
+      
+        }//fin try main
+       catch (RemoteException re)
+        {
+        GUI.errorAccesoRemotoObjeto(re.toString()); 
+        }//fin catch REmoteException
+        catch (Exception e)
+        {
+         GUI.errorGenerico(e.toString());
+        
+        }//fin catch
+    
+    }//fin menu
+	
+	
+}//fin clase Repositorio

@@ -1,0 +1,135 @@
+
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+import java.rmi.server.*;
+import java.io.*;
+
+
+
+
+/******************************************************************************
+ * 
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ * <div>Este es un servicio del Cliente.</div>
+ * <div>Será utilizado por el servicio Servidor-Operador del repositorio para
+ * descargar al disco duro local del cliente el fichero que este 
+ * considere oportuno.</div>
+ * 
+ * 
+ * @author Roberto J. de la Fuente Lopez
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20210422
+ ******************************************************************************/
+public class ServicioDiscoClienteImpl extends UnicastRemoteObject
+                            implements ServicioDiscoClienteInterface
+  {
+  /*===========================================================================
+    Atributos de la clase
+   ==========================================================================*/ 
+  private static final long serialVersionUID = 123456789L;	
+	
+  private String iDCliente;//nombre que identifica este Cliente
+ 
+  private String FICHEROS_DE_CLIENTES="clientesFile";
+  
+  /*===========================================================================
+     Constructores de la clase
+  ===========================================================================*/ 
+
+  /**
+   * Constructor por defecto. Solo llamada para Remote
+   */
+  public ServicioDiscoClienteImpl() throws RemoteException
+    {
+    super();
+    }
+
+  /**
+   * Se inicializa el iDcliente por parametro
+   * 
+   * @param Una String con el nombre del cliente
+   */
+  public ServicioDiscoClienteImpl(String nombre) throws RemoteException
+    {
+    super();
+    
+    this.iDCliente=nombre;
+    }
+	
+/**
+   * Se inicializa el iDcliente por parametro
+   * 
+   * @param Una String con el nombre del cliente
+   */
+  public ServicioDiscoClienteImpl(String nombre,String ruta) throws RemoteException
+    {
+    super();
+    
+    this.iDCliente=nombre;
+	this.FICHEROS_DE_CLIENTES=ruta;
+    }	
+  /*================================================================================
+     Metodos publicos 
+  ================================================================================*/  
+  //métodos get-set IDCliente
+  public void setIDCliente(String nombre)throws RemoteException
+    {
+    iDCliente=nombre;  
+    }//fin setIDCLiente
+
+  public String getIDCliente() throws RemoteException   
+    {
+    return iDCliente;
+    }//fin getIDCLiente
+ 
+ 
+ public Boolean  carpetaParaCliente(String iDCliente) throws RemoteException
+    {
+    //el directorio raiz del paquete sera la ubicacion actual del repositorio
+    File directorio=new File(FICHEROS_DE_CLIENTES+"//"+IDCliente);
+    Boolean res=directorio.mkdirs();
+    return res;
+    }//fin carpeta para clientes
+ 
+ 
+  /**********************************************************************************
+   * Metodo remoto que recibe como parametros el fichero a bajar
+   * El fichero se escribe en la carpeta local del cliente iDCliente.
+   * 
+   * @param fichero a bajar
+   * 
+   * @return Si no hubo problema, true, y false en caso contrario
+   *********************************************************************************/  
+  public Boolean bajarFichero(Fichero fichero) throws RemoteException
+  
+    {
+		
+	Boolean resultado=false;  
+	  System.out.println("se ha anadido un objeto fichero nombre "+fichero.obtenerNombre()+
+       "propietario "+fichero.obtenerPropietario()+" y un tama�o de "+fichero.obtenerPeso()+" bytes");
+    File salida=new File(FICHEROS_DE_CLIENTES+"//"+this.iDCliente+"//"+fichero.obtenerNombre());
+    try
+      {
+      OutputStream outputStream = new FileOutputStream(salida);
+      resultado=fichero.escribirEn(outputStream);
+      }
+     catch (FileNotFoundException e) 
+       {
+       
+    	System.out.println("sin:gui:Fichero no encontrado");
+       }//fin catch filenotfoundexception
+    return resultado;	  
+    }//fin bajar fichero
+  
+  
+  
+  
+ 
+      
+     
+      
+  }//fin clase ServicioDiscoCliente

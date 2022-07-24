@@ -1,0 +1,9 @@
+package usuario;
+
+public interface GUIRepositorioInterface
+  {
+
+	
+	
+	
+  }//fin GUIRepositorioInterface

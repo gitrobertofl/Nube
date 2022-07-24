@@ -1,0 +1,194 @@
+package servidor; 
+import java.rmi.*;
+//import java.rmi.server.*;
+//import java.rmi.registry.Registry;
+//import java.rmi. registry.LocateRegistry;
+//import java.net.InetAddress;
+//import java.io.Serializable;
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA AL OTRO PAQUETE*/
+
+//import repositorio.ServicioSrOperadorInterface;
+import repositorio.ServicioClOperadorInterface;
+//import cliente.ServicioDiscoClienteInterface;
+// FIN INTERFAZ REMOTA
+
+
+/**
+ * NubeRMI es una clase que extiende 
+ * registroRMI, que vamos a utilizar para la aplicación nube
+ * 
+ * @see RegistroRMI
+ * 
+ * 
+ * Con licencia GPL v3 (añadir enlace a la licencia)
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20210105
+ */
+public class NubeRMI // extends RegistroRMI //implements Serializable
+  {
+  //datos de configuración de servidor
+  //nombre simbólico del objeto remoto de acceso a datos 
+  private static String bindDatos="servidor/BD";
+  //nombre simbólico del objeto remoto del servicio gestor
+  private static String bindGestor="servidor/gestor";
+  //nombre simbólico del objeto remoto del servicio  autenticaci�n
+  private static String bindAutenticacion="servidor/autenticacion";
+  //datos de configuración de repositorio
+  //nombre objeto remoto servicio repo servidor
+  private static String bindRepoSr="Repositorio/SR/";
+  //nombre objeto remoto servicio repo cliente
+  private static String bindRepoCl="Repositorio/CL/";
+  //nombre objeto remoto para servicio disco cliente
+  private static String bindDiscoCliente="Cliente/";     
+      
+ 
+ //getters
+ 
+  public static String getBindDatos()
+    {
+    return bindDatos;	 
+    }
+  public static String getBindGestor()
+    {
+	return bindGestor;  
+	}
+  public static String getBindAutenticacion()
+    {
+	return bindAutenticacion;  
+    }
+  
+  public static String getBindRepoSr()
+   {
+   return bindRepoSr; 
+   }
+ 
+ public static String getBindRepoCl()
+   {
+   return bindRepoCl; 
+   }
+ 
+ public static String getBindDiscoCliente()
+  {
+  return bindDiscoCliente;
+  
+  }
+   
+ //métodos registro servicios
+ /******************************************************************************
+   * <div>M�todo para la gesti�n del registro RMI.</div>
+   * <div>Se registra el objeto remoto de ServicioDatos en el directorio, 
+   * al ser este el host que da el servicio de registro RMI
+   * (desde fuera no se puede)</div>
+   * Al ser el primer servicio a registrar, comprueba que no existe, cuyo casi
+   * se lanza AlreadyBoundException para que detecte que ya se est� ejecutando
+   * una instancia del servidor
+   * .
+   * @param objetoRemoto es el objeto a registrar
+   * 
+   *****************************************************************************/ 
+ /*public void registraServicioDatos(ServicioDatosInterface servicioDatos)
+ throws RemoteException,AlreadyBoundException
+   {
+   
+   this.getRefRegistroRMI().bind(bindGestor,servicioDatos);  
+   }//fin registrServicioDatos
+ */
+ /******************************************************************************
+   * <div>M�todo para la gesti�n del registro RMI.</div>
+   * <div>Se registra el objeto remoto de ServicioGestor en el directorio, 
+   * al ser este el host que da el servicio de registro RMI
+   * (desde fuera no se puede)</div>
+   * .
+   * @param objetoRemoto es el objeto a registrar
+   * 
+   *****************************************************************************/ 
+ /*public void registraServicioGestor(ServicioGestorInterface servicioGestor)throws RemoteException
+   {
+   this.getRefRegistroRMI().rebind(bindGestor,servicioGestor);  
+   }//fin registrServicio  
+ */
+ /******************************************************************************
+   * <div>M�todo para la gesti�n del registro RMI.</div>
+   * <div>Se registra el objeto remoto de ServicioAutenticacion en el directorio, 
+   * al ser este el host que da el servicio de registro RMI
+   * (desde fuera no se puede)</div>
+   * .
+   * @param objetoRemoto es el objeto a registrar
+   * 
+   *****************************************************************************/ 
+  /*public void registraServicioAutenticacion(ServicioAutenticacionInterface servicioAutenticacion)
+        throws RemoteException
+   {
+   this.getRefRegistroRMI().rebind(bindAutenticacion,servicioAutenticacion);  
+    
+   }//fin registrServicio  
+ */
+ /******************************************************************************
+   * <div>M�todo para la gesti�n del registro RMI.</div>
+   * <div>Se registra el objeto remoto de Servicios operador en el directorio, 
+   * al ser este el host que da el servicio de registro RMI
+   * (desde fuera no se puede)</div>
+   * .
+   * @param el ID del repositorio para completar el bind
+   * @param SrOperador es el objeto a registrar
+   * @param ClOperador es elobjeto a registrar
+   * 
+   *****************************************************************************/ 
+  /*public void registraServiciosRepositorio(String IDRepositorio,
+                                ServicioSrOperadorInterface servicioSrOperador,
+                                ServicioClOperadorInterface servicioClOperador)
+             throws RemoteException
+   {
+   this.getRefRegistroRMI().rebind(bindRepoSr+IDRepositorio,servicioSrOperador);
+   this.getRefRegistroRMI().rebind(bindRepoCl+IDRepositorio,servicioClOperador);                               
+   }//fin registraServiciosRepositorio
+  
+ public void registraServicioCliente(String IDCliente,
+                                ServicioDiscoClienteInterface servicioDiscoCliente)
+             throws RemoteException
+   {
+   this.getRefRegistroRMI().rebind(bindDiscoCliente+IDCliente,servicioDiscoCliente);                               
+   }//fin registraServicio  
+  
+  //m�todos desregistrar servicios 
+  public Boolean desRegistrarServiciosRepositorio(String IDRepositorio)           
+             throws RemoteException
+    {
+    Boolean resultado=false;
+    resultado=this.desRegistrarObjetoRemoto(bindRepoSr+IDRepositorio);  
+    if (resultado)
+      resultado=this.desRegistrarObjetoRemoto(bindRepoCl+IDRepositorio);
+    return resultado;  
+    }         
+ 
+  public Boolean desRegistrarServicioCliente(String IDCliente)
+             throws RemoteException
+    {
+    return this.desRegistrarObjetoRemoto(bindDiscoCliente+IDCliente); 
+    }         
+    
+    */
+ public static ServicioAutenticacionInterface obtenerRefSvrAutenticacion()
+         throws RemoteException,NotBoundException
+   {
+   return  (ServicioAutenticacionInterface)MiRegistroRMI.getRefRegistroRMI().lookup(bindAutenticacion);
+   }
+
+ public static ServicioGestorInterface obtenerRefSvrGestor()
+         throws RemoteException,NotBoundException
+   {
+   return  (ServicioGestorInterface)MiRegistroRMI.getRefRegistroRMI().lookup(bindGestor);
+   } 
+   
+   
+ public static ServicioClOperadorInterface obtenerRefClOperadorRepo(String IDRepoAsignado)
+ throws RemoteException,NotBoundException
+   {
+   return (ServicioClOperadorInterface)MiRegistroRMI.getRefRegistroRMI().lookup(bindRepoCl+IDRepoAsignado);  
+   }//fin obtener referenciacloperador
+   
+  }//fin claseNubeRMI

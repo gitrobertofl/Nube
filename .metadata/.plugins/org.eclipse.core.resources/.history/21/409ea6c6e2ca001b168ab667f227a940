@@ -1,0 +1,225 @@
+package usuario; 
+
+import java.util.Scanner;
+//import java.util.Vector;
+/********************************************************************************
+ * esta clase va a implementar el interface del entorno de usuario en modo 
+ * consola. 
+ * Contiene los métodos para la visualización de cada menú
+ * 
+ * @author Roberto J. de la Fuente López 
+ * @version 20200327
+ *********************************************************************************/
+public class GUIClienteTexto extends GUIUsuarioTexto implements GUIClienteInterface
+  {
+  
+  /**
+    * Constructor de vista texto. Se le pasa como parametro el tpv
+   */
+  public GUIClienteTexto() 
+    {
+    
+    }
+  public GUIClienteTexto(String tipo)
+    {
+    super(tipo);
+    }
+
+    
+ 
+   
+  public Character menuUsuarioAcreditado(String IDCliente)
+    {
+	@SuppressWarnings("resource")//para no cerrar Scanner 
+	Scanner teclado=new Scanner(System.in);
+    Character tecla='0'; //captura la primera tecla pulsada
+    String cadenaEntrada="";//para capturar la entrada
+    //límites de opcion
+    char opcionInicial='1';
+    char opcionFinal='7';
+    limpiarPantalla();   
+    System.out.println("        ALMCENAMIENTO EN LA NUBE");
+    System.out.println("         "+tipoUsuario+" : "+IDCliente);
+    System.out.println();
+    System.out.println(" 1 - Subir fichero");
+    System.out.println(" 2 - Bajar fichero");
+    System.out.println(" 3 - Borrar fichero");
+    System.out.println(" 4.- Compartir fichero");
+    System.out.println(" 5.- Listar ficheros");
+    System.out.println(" 6.- Listar Clientes del sistema");
+    System.out.println(" 7.- Salir");
+    System.out.println("");
+    System.out.println("Pulsar una opcion y despues intro. Si es erronea volvera a este menu");
+    System.out.print("opcion elegida : ");
+    cadenaEntrada=teclado.nextLine();
+    //si solo se pulsa intro, la cadena esta vacia, por lo que hay que volver a imprimir
+    if ((cadenaEntrada.length()==0) ||
+           ((cadenaEntrada.charAt(0)<opcionInicial)&&(cadenaEntrada.charAt(0)>opcionFinal)))
+      {
+      tecla='n';   
+      }//fin si entrada vacia
+     else
+      {
+      tecla=cadenaEntrada.charAt(0);   
+      }
+    
+    return tecla;
+    }//fin menuClienteAcreditado
+   
+  
+ 
+ 
+  
+    public String nombreFichero(String IDCliente)
+      {
+      @SuppressWarnings("resource")//para no cerrar Scanner  	
+      Scanner teclado=new Scanner(System.in);
+      String cadenaEntrada="";//para capturar la entrada
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+IDCliente);
+      System.out.println();
+      System.out.println("     INTRODUCCION DE NOMBRE DE FICHERO");
+      System.out.print("Introduce el nombre de fichero: ");
+      cadenaEntrada=teclado.nextLine();
+      if (cadenaEntrada.length()==0) cadenaEntrada=""; 
+      return cadenaEntrada;  
+      }//fin nombreFichero
+    
+	
+	
+	/*intro o un valor distito de n es true*/
+	
+    public Boolean esAjeno(String iDCliente)
+      {
+	  Boolean esAjeno=false;  
+      @SuppressWarnings("resource")//para no cerrar Scanner  	
+      Scanner teclado=new Scanner(System.in);
+      String cadenaEntrada="";//para capturar la entrada
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.print("¿Es fichero propio (S/N)? INTRO si por defecto ");
+      cadenaEntrada=teclado.nextLine();
+      if (cadenaEntrada.length()==0)
+        esAjeno=true;
+	   else
+		   System.out.println(" se dicho : "+cadenaEntrada.charAt(0));
+		if ((cadenaEntrada.charAt(0)=='N')||(cadenaEntrada.charAt(0)=='n'))
+          esAjeno=false;			
+			
+		System.out.println(" y se dice que es ajeno: "+esAjeno.toString());
+      return esAjeno;  
+      }//fin nombreFichero
+    
+    public String nombrePropietario(String iDCliente)
+      {
+      @SuppressWarnings("resource")//para no cerrar Scanner  	
+      Scanner teclado=new Scanner(System.in);
+      String cadenaEntrada="";//para capturar la entrada
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.println("     INTRODUCCION DE ID DE PROPIETARIO");
+      System.out.print("Introduce el nombre del propietario: ");
+      cadenaEntrada=teclado.nextLine();
+      if (cadenaEntrada.length()==0) cadenaEntrada=""; 
+      return cadenaEntrada;  
+      }//fin nombrePropietario
+    
+	
+    
+    public void errorNombreFichero(String iDCliente)
+      {
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.println("Error en el nombre de fichero");  
+      pulsaIntro();  
+      }//fin errorNombreFichero
+    
+    
+    public void errorFicheroRepe (String iDCliente)
+      {
+        limpiarPantalla();   
+        System.out.println("        ALMCENAMIENTO EN LA NUBE");
+        System.out.println("         Cliente : "+iDCliente);
+        System.out.println();
+        System.out.println("Error: el fichero ya existe");  
+        pulsaIntro();  
+        }//fin errorFicheroRepe
+    public void errorFicheroNoExiste (String iDCliente)
+      {
+        limpiarPantalla();   
+        System.out.println("        ALMCENAMIENTO EN LA NUBE");
+        System.out.println("         Cliente : "+iDCliente);
+        System.out.println();
+        System.out.println("Error: el fichero no existe");  
+        pulsaIntro();  
+        }//fin errorFicheroNoExiste
+    public void errorBajadaFichero(String iDCliente)
+    {
+        limpiarPantalla();   
+        System.out.println("        ALMCENAMIENTO EN LA NUBE");
+        System.out.println("         Cliente : "+iDCliente);
+        System.out.println();
+        System.out.println("Error: no se puede bajar fichero");  
+        pulsaIntro();  
+        }//fin errorFicheroNoExiste
+    
+    public void avisoRepoNoActivo(String iDCliente)
+      {
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.println("El repositorio asignado no esta activo.");  
+      pulsaIntro(); 
+      }//fin avisoRepoNoActivo
+   
+   public void verListadoClientes(String listado)
+     {
+     limpiarPantalla();
+     //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Listado de clientes");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }   
+      
+      
+      
+   public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado)
+     {
+     limpiarPantalla();
+     //obtenemos el id del cliente por consola 
+      
+      
+      //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE");
+     System.out.println("           Listado de ficheros del cliente "+IDCliente);
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre de fichero   (c) compartido, (o) compartido por otros");
+     //datos   
+     System.out.println(listado);
+     System.out.println("fin de listado");
+     //pulsa tecla
+     pulsaIntro();   
+        
+     }//fin verListadoFicheroscliente   
+ 
+    
+    //no permite nombres de usuario en blanco
+  
+  
+     
+     
+}//fin clase GUIClienteTexto

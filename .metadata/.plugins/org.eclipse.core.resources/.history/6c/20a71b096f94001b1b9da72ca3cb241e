@@ -1,0 +1,66 @@
+package usuario;
+
+import repositorio.ServicioClOperadorImpl;
+import repositorio.ServicioClOperadorInterface;
+import repositorio.ServicioSrOperadorImpl;
+import repositorio.ServicioSrOperadorInterface;
+import servidor.NubeRMI;
+
+public class Repositorio extends Usuario {
+  //variables de instancia
+  //creamos un objeto para el servicio del repositorio para servidor
+  private ServicioSrOperadorInterface servicioSrOperador;
+  //creamos un objeto para el servicio del repositorio para el cliente
+  private ServicioClOperadorInterface servicioClOperador;
+	
+	
+  public Repositorio()
+	{
+	super(TIPO_REPOSITORIO);	
+	}//FIN CONSTRUCTOR Repositorio()
+
+	@Override
+	protected void inicioSesionUsuario(IDRepositorio)
+		
+	  {
+		//esta acreditado: obtener y marcar como activo y registrarlo en RMI
+        servicioSrOperador=new ServicioSrOperadorImpl(IDRepositorio);
+        servicioClOperador=new ServicioClOperadorImpl(IDRepositorio);
+      
+      
+        System.out.println("hemos creado el objeto sr "+ servicioSrOperador.getNickRepositorio());
+        System.out.println("hemos creado el objeto cl "+ servicioClOperador.getNickRepositorio());
+        
+        // los registra en RMI. con gestor, NubeRMI no puede al ser otro host
+        gestor.registraServiciosRepositorio(IDRepositorio,servicioSrOperador,servicioClOperador); 
+        
+        /*
+        registroRMIRemoto.registrarObjetoRemoto
+               //"Repositorio/SR/"
+              (Configuracion.bindRepoSr+servicioSrOperador.getNickRepositorio(),servicioSrOperador);
+        registroRMIRemoto.registrarObjetoRemoto
+               //"Repositorio/CL/"
+              (Configuracion.bindRepoCl+servicioClOperador.getNickRepositorio(),servicioClOperador);
+        */      
+        //entramos en menu repositorio acreditado
+        menuRepositorio(GUI,IDRepositorio);
+        //como vamos a salir, marcamos como repositorio inactivo, 
+        //�y si tiene un cliente enganchado? avisar o no hacerlo
+        autenticacion.desactivarRepositorio(IDRepositorio);
+        // desregistramos los servicios de RMI
+        gestor.desRegistrarServiciosRepositorio(IDRepositorio);
+        /*
+        registroRMIRemoto.desRegistrarObjetoRemoto
+          //"Repositorio/SR/"
+          (Configuracion.bindRepoSr+servicioSrOperador.getNickRepositorio());
+        registroRMIRemoto.desRegistrarObjetoRemoto
+          //"Repositorio/CL/"
+          (Configuracion.bindRepoCl+servicioClOperador.getNickRepositorio());
+        */ 
+		
+		
+		
+		
+	  }//fin inicioSesionUsuairo
+	
+}

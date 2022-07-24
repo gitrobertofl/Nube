@@ -1,0 +1,210 @@
+package usuario; 
+
+import java.util.Scanner;
+//import java.util.Vector;
+import java.io.*;
+/********************************************************************************
+ * esta clase va a implementar el interface del entorno de usuario en modo 
+ * consola. 
+ * Contiene los métodos para la visualización de cada menú
+ * 
+ * @author Roberto J. de la Fuente López 
+ * @version 20200327
+ *********************************************************************************/
+public class GUIClienteTexto extends GUIUsuarioTexto
+  {
+  
+  /**
+    * Constructor de vista texto. Se le pasa como parametro el tpv
+   */
+  public GUIClienteTexto()
+    {
+    
+    }
+  public GUIClienteTexto(String tipo)
+    {
+    super(tipo);
+    }
+
+    
+ 
+   
+  public Character menuUsuarioAcreditado(String IDCliente)
+    {
+	@SuppressWarnings("resource")//para no cerrar Scanner 
+	Scanner teclado=new Scanner(System.in);
+    Character tecla='0'; //captura la primera tecla pulsada
+    String cadenaEntrada="";//para capturar la entrada
+    //límites de opcion
+    char opcionInicial='1';
+    char opcionFinal='7';
+    limpiarPantalla();   
+    System.out.println("        ALMCENAMIENTO EN LA NUBE");
+    System.out.println("         "+tipoUsuario+" : "+IDCliente);
+    System.out.println();
+    System.out.println(" 1 - Subir fichero");
+    System.out.println(" 2 - Bajar fichero");
+    System.out.println(" 3 - Borrar fichero");
+    System.out.println(" 4.- Compartir fichero");
+    System.out.println(" 5.- Listar ficheros");
+    System.out.println(" 6.- Listar Clientes del sistema");
+    System.out.println(" 7.- Salir");
+    System.out.println("");
+    System.out.println("Pulsar una opcion y despues intro. Si es erronea volvera a este menu");
+    System.out.print("opcion elegida : ");
+    cadenaEntrada=teclado.nextLine();
+    //si solo se pulsa intro, la cadena esta vacia, por lo que hay que volver a imprimir
+    if ((cadenaEntrada.length()==0) ||
+           ((cadenaEntrada.charAt(0)<opcionInicial)&&(cadenaEntrada.charAt(0)>opcionFinal)))
+      {
+      tecla='n';   
+      }//fin si entrada vacia
+     else
+      {
+      tecla=cadenaEntrada.charAt(0);   
+      }
+    
+    return tecla;
+    }//fin menuClienteAcreditado
+   
+  
+ 
+ 
+  
+    public String nombreFichero(String IDCliente)
+      {
+      Scanner teclado=new Scanner(System.in);
+      String cadenaEntrada="";//para capturar la entrada
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+IDCliente);
+      System.out.println();
+      System.out.println("     INTRODUCCION DE NOMBRE DE FICHERO");
+      System.out.print("Introduce el nombre de fichero: ");
+      cadenaEntrada=teclado.nextLine();
+      if (cadenaEntrada.length()==0) cadenaEntrada=""; 
+      teclado.close();
+      return cadenaEntrada;  
+      }//fin nombreFichero
+    
+     }    
+    
+    public void errorNombreFichero(String IDCliente)
+      {
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+IDCliente);
+      System.out.println();
+      System.out.println("Error en el nombre de fichero");  
+      pulsaIntro();  
+      }//fin menuFichero
+    
+    
+   
+   public void verListadoClientes(String listado)
+     {
+     limpiarPantalla();
+     //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Listado de clientes");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }   
+      
+      
+      
+   public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado)
+     {
+     limpiarPantalla();
+     //obtenemos el id del cliente por consola 
+      
+      
+      //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Repositorio : "+IDRepositorio);
+     System.out.println("           Listado de ficheros del cliente "+IDCliente);
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre de fichero   ");
+     //datos   
+     System.out.println(listado);
+     System.out.println("fin de listado");
+     //pulsa tecla
+     pulsaIntro();   
+        
+     }//fin verListadoFicheroscliente   
+ 
+   public void finDePrograma()
+    {
+    limpiarPantalla();
+    System.out.println("fin Cliente ");
+                  
+    }
+  
+    
+    //no permite nombres de usuario en blanco
+  
+   private void limpiarPantalla()
+     {
+     for (int i=0;i<40;i++)
+       {
+       System.out.println(); 
+       }
+        
+     }//fin limpiar consola
+  
+   private void pulsaIntro()
+     {
+     System.out.print("Pulsa intro  ");
+     obtenerPwd();
+             
+     }//fin pulsa Intro  
+    
+   /**
+    * 
+    * introducir una contrase�a (entorno de programaci�n no tiene consola)
+    * tambi�n sirve para pulsar una tecla cualquiera sin visualizac�n
+    * 
+    */  
+     
+     
+   private String obtenerPwd()
+     {
+     Console terminal = System.console();
+     String cadenaEntrada="";
+        //si consola virtual, contrase�a en claro
+        if (terminal==null )
+          {
+          Scanner teclado=new Scanner(System.in);    
+          System.out.print("Fuera de consola.");
+          cadenaEntrada=teclado.nextLine();
+          //si no es intro, se actualiza la contrase�a
+          if (cadenaEntrada.length()==0)
+            {
+            cadenaEntrada=""; //borrado por seguridad.
+            }//fin si la cadena no vacia
+          teclado.close();
+          }//fin si terminal==0
+         else
+          {//tiene consola
+          try
+            {
+            cadenaEntrada=new String(terminal.readPassword());
+            }
+           catch  (IOError io)
+            {
+            System.out.println("no se pudo capturar : "+io);
+            }
+          }//fin sino terminal
+       
+      //aqu� ciframos la contrase�a    
+      
+      return cadenaEntrada;  
+     }//fin pulsa Intro    
+     
+     
+     
+}//fin clase GUIClienteTexto

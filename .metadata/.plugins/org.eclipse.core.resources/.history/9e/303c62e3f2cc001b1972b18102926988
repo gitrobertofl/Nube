@@ -1,0 +1,283 @@
+package usuario; 
+
+import java.util.Scanner;
+/********************************************************************************
+ * <div>Esta clase va a implementar el interface del cliente en modo 
+ * consola.</div> 
+ * <div>Contiene los metodos para la visualizacion de cada menu</div>
+
+ * Con licencia GPL v3
+ *
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ *********************************************************************************/
+public class GUIClienteTexto extends GUIUsuarioTexto implements GUIClienteInterface
+  {
+  /*==========================================================================
+    Atributos de la clase
+    ========================================================================*/  
+
+  /*===========================================================================
+    Constructores de la clase
+    ==========================================================================*/  
+      
+  /*********************************************************************************
+   * Constructor por defecto. no hace nada
+   ********************************************************************************/
+  public GUIClienteTexto() 
+    {
+    
+    }
+
+  /*********************************************************************************
+   * Constructor que recibe el tipo de usuario que ejecuta para llamar al constructor
+   * de su clase padre
+   *
+   * @param tipo cadena con el tipo de usuario
+   *
+   ********************************************************************************/  
+  public GUIClienteTexto(String tipo)
+    {
+    super(tipo);
+    }
+
+  
+  /*==========================================================================
+   * Metodos publicos
+   * ========================================================================*/    
+  //menu    
+    
+  /********************************************************************************
+   * <div>Implementacion del metodo abstracto de GuiUsuario</div>
+   * <div>Se visualiza el menu especifico del cliente, una vez acreditado.</div>
+   * 
+   * @param iDusuario obtiene el ID del repostitorio
+   * @return devuelve el primer caracter pulsado con numero que se pulsa (u otra cosa)
+   * o 'n' si intro
+   *******************************************************************************/ 
+  public Character menuUsuarioAcreditado(String iDUsuario)
+    {
+	@SuppressWarnings("resource")//para no cerrar Scanner 
+	Scanner teclado=new Scanner(System.in);
+    Character tecla='0'; //captura la primera tecla pulsada
+    String cadenaEntrada="";//para capturar la entrada
+    //límites de opcion
+    char opcionInicial='1';
+    char opcionFinal='7';
+    this.verCabecera();   
+    System.out.println("         "+tipoUsuario+" : "+iDUsuario);
+    System.out.println();
+    System.out.println(" 1 - Subir fichero");
+    System.out.println(" 2 - Bajar fichero");
+    System.out.println(" 3 - Borrar fichero");
+    System.out.println(" 4.- Compartir fichero");
+    System.out.println(" 5.- Listar ficheros");
+    System.out.println(" 6.- Listar Clientes del sistema");
+    System.out.println(" 7.- Salir");
+    System.out.println("");
+    System.out.println("Pulsar una opcion y despues intro. Si es erronea volvera a este menu");
+    System.out.print("opcion elegida : ");
+    cadenaEntrada=teclado.nextLine();
+    //si solo se pulsa intro, la cadena esta vacia, por lo que hay que volver a imprimir
+    if ((cadenaEntrada.length()==0) ||
+           ((cadenaEntrada.charAt(0)<opcionInicial)&&(cadenaEntrada.charAt(0)>opcionFinal)))
+      {
+      tecla='n';   
+      }//fin si entrada vacia
+     else
+      {
+      tecla=cadenaEntrada.charAt(0);   
+      }
+    return tecla;
+    }//fin menuClienteAcreditado
+
+  //captura de datos
+  
+  /********************************************************************************
+   * <div> Este metodo captura si el fichero que se va a bajar es propio o no.</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   * @return un caracter S, s, N, n 
+   *  
+   *******************************************************************************/
+  public Character esFicheroPropio(String iDCliente)
+    {
+    Character opcion='s';  
+    @SuppressWarnings("resource")//para no cerrar Scanner  	
+    Scanner teclado=new Scanner(System.in);
+    String cadenaEntrada="";//para capturar la entrada
+    limpiarPantalla();   
+    System.out.println("        ALMCENAMIENTO EN LA NUBE");
+    System.out.println("         Cliente : "+iDCliente);
+    System.out.println();
+    System.out.print("¿Es fichero propio (S/N)? ");
+    cadenaEntrada=teclado.nextLine();
+    if (!(cadenaEntrada.length()==0))
+      opcion=cadenaEntrada.charAt(0);
+   return opcion;  
+   }//fin esFicheroPropio
+  
+  /********************************************************************************
+   * <div> Este metodo captura el id del cliente propietario del fichero compartido
+   * que se quiere bajaro</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   * @return cadena introducida (si intro, cadena vacia)
+   *  
+   *******************************************************************************/
+  public String nombrePropietario(String iDCliente)
+    {
+    @SuppressWarnings("resource")//para no cerrar Scanner  	
+    Scanner teclado=new Scanner(System.in);
+    String cadenaEntrada="";//para capturar la entrada
+    this.verCabecera(); 
+    System.out.println("         Cliente : "+iDCliente);
+    System.out.println("---------------------------------------------------------------------------");
+    System.out.println();
+    System.out.println("     INTRODUCCION DE ID DE PROPIETARIO");
+    System.out.println("");
+    System.out.print("Introduce el nombre del propietario: ");
+    cadenaEntrada=teclado.nextLine();
+    if (cadenaEntrada.length()==0)
+  	cadenaEntrada=""; 
+    return cadenaEntrada;  
+    }//fin nombrePropietario
+
+  /********************************************************************************
+   * <div> Este metodo captura el nombre del fichero que se quiere subir/bajar</div>
+   * 
+   * @param iDCliente el correspondiente al cliente en ejecucion.
+   * @return cadena introducida (si intro, cadena vacia)
+   *  
+   *******************************************************************************/
+  public String nombreFichero(String iDCliente)
+    {
+    @SuppressWarnings("resource")//para no cerrar Scanner  	
+    Scanner teclado=new Scanner(System.in);
+    String cadenaEntrada="";//para capturar la entrada
+    this.verCabecera(); 
+    System.out.println("         Cliente : "+iDCliente);
+    System.out.println("---------------------------------------------------------------------------");
+    System.out.println();
+    System.out.println("     INTRODUCCION DE NOMBRE DE FICHERO");
+    System.out.println();
+    System.out.print("Introduce el nombre del fichero : ");
+    cadenaEntrada=teclado.nextLine();
+    if (cadenaEntrada.length()==0)
+      cadenaEntrada=""; 
+    return cadenaEntrada;  
+    }//fin nombreFichero
+    
+    
+    public void avisoBajadaFichero(String iDCliente, String iDClienteComp,String nombreFichero)
+      {
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.println("Se ha BAJAR se ha anadido un objeto fichero nombre "+nombreFichero+
+    	       "propietario "+iDClienteComp);
+    	
+      }//fin avisoBajadaFichero
+    
+	
+	
+	/*intro o un valor distito de n es true*/
+	
+
+
+    
+    public void errorNombreFichero(String iDCliente)
+      {
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.println("Error en el nombre de fichero");  
+      pulsaIntro();  
+      }//fin errorNombreFichero
+    
+    
+    public void errorFicheroRepe (String iDCliente)
+      {
+        limpiarPantalla();   
+        System.out.println("        ALMCENAMIENTO EN LA NUBE");
+        System.out.println("         Cliente : "+iDCliente);
+        System.out.println();
+        System.out.println("Error: el fichero ya existe");  
+        pulsaIntro();  
+        }//fin errorFicheroRepe
+    public void errorFicheroNoExiste (String iDCliente)
+      {
+        limpiarPantalla();   
+        System.out.println("        ALMCENAMIENTO EN LA NUBE");
+        System.out.println("         Cliente : "+iDCliente);
+        System.out.println();
+        System.out.println("Error: el fichero no existe");  
+        pulsaIntro();  
+        }//fin errorFicheroNoExiste
+    public void errorBajadaFichero(String iDCliente)
+    {
+        limpiarPantalla();   
+        System.out.println("        ALMCENAMIENTO EN LA NUBE");
+        System.out.println("         Cliente : "+iDCliente);
+        System.out.println();
+        System.out.println("Error: no se puede bajar fichero");  
+        pulsaIntro();  
+        }//fin errorFicheroNoExiste
+    
+    public void avisoRepoNoActivo(String iDCliente)
+      {
+      limpiarPantalla();   
+      System.out.println("        ALMCENAMIENTO EN LA NUBE");
+      System.out.println("         Cliente : "+iDCliente);
+      System.out.println();
+      System.out.println("El repositorio asignado no esta activo.");  
+      pulsaIntro(); 
+      }//fin avisoRepoNoActivo
+   
+   public void verListadoClientes(String listado)
+     {
+     limpiarPantalla();
+     //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE. Listado de clientes");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }   
+      
+      
+      
+   public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado)
+     {
+     limpiarPantalla();
+     //obtenemos el id del cliente por consola 
+      
+      
+      //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("       ALMACENAMIENTO EN LA NUBE");
+     System.out.println("           Listado de ficheros del cliente "+IDCliente);
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre de fichero   (c) compartido, (o) compartido por otros");
+     //datos   
+     System.out.println(listado);
+     System.out.println("fin de listado");
+     //pulsa tecla
+     pulsaIntro();   
+        
+     }//fin verListadoFicheroscliente   
+ 
+    
+    //no permite nombres de usuario en blanco
+  
+  
+     
+     
+}//fin clase GUIClienteTexto

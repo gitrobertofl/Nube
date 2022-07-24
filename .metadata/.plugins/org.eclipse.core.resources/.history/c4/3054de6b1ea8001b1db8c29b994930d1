@@ -1,0 +1,129 @@
+
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+import java.rmi.server.*;
+import java.io.*;
+
+
+
+
+/**
+ * Write a description of class ServicioDiscoClienteImpl here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class ServicioDiscoClienteImpl extends UnicastRemoteObject
+                            implements ServicioDiscoClienteInterface
+  {
+	private static final long serialVersionUID = 123456789L;	
+	
+  private String nicCliente;//nombre que identifica este Cliente
+  
+  private Boolean autorizado=false;//respuesta si autentificacado
+  private Boolean respondidoAut=false;//respuesta de servicio autenticación
+  //indicadores de servicio gestor
+   
+  
+  
+
+  /**
+   * Constructor for objects of class ServicioDiscoClienteImpl
+   */
+  public ServicioDiscoClienteImpl() throws RemoteException
+    {
+    super();
+    }
+
+  /**
+   * Constructor for objects of class ServicioDiscoClienteImpl
+   */
+  public ServicioDiscoClienteImpl(String nombre) throws RemoteException
+    {
+    super();
+    
+    this.nicCliente=nombre;
+    }
+    
+ //?
+  public void setRespondidoAut(Boolean flag) throws RemoteException
+    {
+    respondidoAut=flag;
+    
+    }
+  
+    //?
+  public void setAutorizado(Boolean flag)throws RemoteException
+    {
+    autorizado=flag;
+    
+    }
+      
+  public void setNicCliente(String nombre)throws RemoteException
+    {
+    nicCliente=nombre;  
+    }
+  //?    
+  public Boolean getRespondidoAut()throws RemoteException
+    {
+    return respondidoAut;
+    }
+  
+ //?   
+  public Boolean getAutorizado()throws RemoteException
+    {
+    return autorizado;
+    }
+    
+  
+  public String getNickCliente() throws RemoteException   
+    {
+    return nicCliente;
+    }  
+  
+  
+  public Boolean bajarFichero(Fichero fichero) throws RemoteException
+  
+    {
+	Boolean resultado=false;  
+	  System.out.println("se ha anadido un objeto fichero nombre "+fichero.obtenerNombre()+
+       "propietario "+fichero.obtenerPropietario()+" y un tama�o de "+fichero.obtenerPeso()+" bytes");
+     File salida=new File(IDCliente+"//"+fichero.obtenerNombre());
+         try {
+     
+      OutputStream outputStream = new FileOutputStream(salida);
+      resultado=fichero.escribirEn(outputStream);
+      
+      
+      
+    } catch (FileNotFoundException e) {
+      System.out.println("Fichero no encontrado");
+    } 
+    
+	  
+	  
+	  
+	  
+	  
+    return resultado;	  
+    }//fin bajar fichero
+  
+  
+  
+  
+ //?
+    
+      public String msgServicioDiscoCliente(String mensaje)
+                    throws RemoteException
+     {
+       String msgRetorno="msg desde servicio de disco en cliente";
+      System.out.println("msg desde servicio de disco en cliente");
+      return msgRetorno;
+      
+      }//fin setConfTablero el tablero
+              
+      
+     
+      
+}//fin clase CallBackJugdorImpl

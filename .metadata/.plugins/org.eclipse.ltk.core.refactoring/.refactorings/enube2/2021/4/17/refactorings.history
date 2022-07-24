@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;nicCliente&apos; in &apos;usuario.ServicioDiscoClienteImpl&apos; to &apos;iDCliente&apos;&#x0D;&#x0A;- Original project: &apos;enube2&apos;&#x0D;&#x0A;- Original element: &apos;usuario.ServicioDiscoClienteImpl.nicCliente&apos;&#x0D;&#x0A;- Renamed element: &apos;usuario.ServicioDiscoClienteImpl.iDCliente&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;nicCliente&apos;" flags="589826" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;usuario{ServicioDiscoClienteImpl.java[ServicioDiscoClienteImpl^nicCliente" name="iDCliente" references="true" setter="false" stamp="1619613398405" textual="false" version="1.0"/>
+</session>

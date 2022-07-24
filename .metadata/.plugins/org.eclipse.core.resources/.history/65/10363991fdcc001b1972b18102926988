@@ -1,0 +1,53 @@
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+
+/******************************************************************************************
+ * <div> Servicio Servidor-operador:</div>
+ *<div> Este servicio tiene un doble objetivo:</div>
+ * <ul><li> 1.- Por un lado, suministra los metodos necesarios para que el servidor gestione
+ *    los lugares de almacenamiento para cada cliente.</li>
+ *
+ *  <li>2.- Se encarga de la operaci�n de bajada de ficheros desde el repositorio al cliente,
+ *   es decir, cuando un cliente quiere bajar un fichero se lo pide al servidor mediante el 
+ *   servicio Gestor. Una vez que el servidor averigua que repositorio aloja el fichero requerido
+ *   por el cliente, �ste llama a un m�todo del Servicio Servidor-Operador y le pasa la URL del 
+ *   cliente para que pueda llamar al m�todo de descarga del servicio DiscoCliente que es el que 
+ *   realmente se encarga de la descarga</li></ul>
+ * 
+ * 
+ * Con licencia GPL v3
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ *******************************************************************************************/
+
+public interface ServicioSrOperadorInterface extends Remote 
+  {
+ 
+
+  
+  public String getNickRepositorio()throws RemoteException;    
+    
+  
+  public void setNicRepositorio(String nombre)throws RemoteException;
+  
+  
+  
+  /**********************************************************************************************
+     m�todo ofrecido para que el servidor gestione el lugar de almacenamiento (carpeta) para los
+     ficheros de un cliente, cuyo ID se pasa como par�metro
+     @param cadena con el ID del cliente
+     @return true si no se produjo error, false en caso contrario
+   *********************************************************************************************/  
+  public Boolean  carpetaParaCliente(String IDCliente) throws RemoteException; 
+ 
+  
+  public Boolean bajarFichero(String iDCliente, String iDClienteProp, String nombreFichero)
+		  throws RemoteException,NotBoundException;
+  
+  
+}

@@ -1,0 +1,159 @@
+
+package usuario;
+
+import java.rmi.*;
+import java.rmi.server.*;
+import java.io.*;
+
+
+/********************************************************************************
+ * <div>Servicio Cliente-Operador:</div>
+ * <div>Este servicio se encarga de las operaciones de subida de ficheros al
+ * repositorio y borrado de los mismos. El servicio Gestor del servidor responde
+ *  a la peticion del cliente enviandole la URL de este servicio para que pueda
+ *  completar su operacion. </div>
+ * 
+ * Con licencia GPL v3
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ *******************************************************************************/
+public class ServicioClOperadorImpl extends UnicastRemoteObject
+                            implements ServicioClOperadorInterface
+  {
+  /*==============================================================================
+     Atributos de la clase (static)
+    ===============================================================================*/ 
+  private static final long serialVersionUID = 123456789L;
+
+  /*==============================================================================
+	Atributos de instancia
+	===============================================================================*/ 
+  private String nickRepositorio;//nombre que identifica este Repositorio
+  private String FICHEROS_DE_REPOS="reposFile"; //ruta para fichero del repositorio
+
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/  
+
+  /******************************************************************************
+   * Constructor por defecto. Llama al constructor de la clase padre Unicast.
+   * 
+   * @throws RemoteException
+   *
+   ********************************************************************************/
+  public ServicioClOperadorImpl() throws RemoteException
+    {
+    super();
+    }
+
+  /******************************************************************************
+   * Constructor en el que incializa el nombre de repositorio, ademas de llamar
+   * al constructor padre de Unicast
+   * 
+   * @param nombre nombre del repositorio que se crea
+   * @throws RemoteException
+   *
+   *****************************************************************************/
+  public ServicioClOperadorImpl(String nombre) throws RemoteException
+    {
+    super();
+    
+    this.nickRepositorio=nombre;
+    }
+  
+  /******************************************************************************
+   * Constructor en el que inicializa la ruta donde se guardan los ficheros  y
+   * se inicializa el nombre del repositorio,, ademas de llamar
+   * al constructor padre de Unicast.
+   * 
+   * @param nombre nombre del repositorio que se crea
+   * @param ruta la de almacenamiento de los ficheros de los clientes
+   * @throws RemoteException
+   *****************************************************************************/
+  public ServicioClOperadorImpl(String nombre, String ruta) throws RemoteException
+    {
+    super();
+    this.nickRepositorio=nombre;
+	this.FICHEROS_DE_REPOS=ruta;
+    }
+  
+  
+  /*================================================================================
+     Metodos publicos 
+     ================================================================================*/
+  //get
+  /*****************************************************************************
+   * obtener el nombre del repositorio activo.
+   * @return nombre del repositorio
+   * @throws RemoteException
+   *   
+   *************************************************************************** */
+  public String getNickRepositorio() throws RemoteException   
+    {
+    return nickRepositorio;
+    }  
+  
+  //set
+ /*****************************************************************************
+  * cambiar el nombre del repositorio activo.
+  * @param nombre nombre nuevo para el repositorio
+  * @throws RemoteException
+  *   
+  *************************************************************************** */
+  public void setNicRepositorio(String nombre)throws RemoteException
+    {
+    nickRepositorio=nombre;  
+    }
+
+  //servicios ficheros
+  /*****************************************************************************
+   * realiza la operacion de guardar el fichero pasado por paramentro en la 
+   * carpeta para el cliente correspondiente de este repositorio
+   * @param fichero objeto con el fichero a guardar
+   * @return true si se subio con exito
+   * @throws RemoteException
+   *   
+   *************************************************************************** */
+  public Boolean subirFichero (Fichero fichero) throws RemoteException   
+    {
+    Boolean resultado=false;
+    File salida=new File(FICHEROS_DE_REPOS+"//"+nickRepositorio+"//"+fichero.obtenerPropietario()+"//"+fichero.obtenerNombre());
+    try
+      {
+      OutputStream outputStream = new FileOutputStream(salida);
+      resultado=fichero.escribirEn(outputStream);
+      //¿se captura ete error?se supone que no 
+      }
+     catch (FileNotFoundException e)
+       {
+       System.out.println("SIN GUI: Fichero no encontrado");
+       } 
+         
+    return resultado;    
+    }//fin subirFichero
+  
+  /*****************************************************************************
+   * realiza la operacion de borrar el fichero pasado por paramentro en la 
+   * carpeta para el cliente correspondiente de este repositorio
+   * @param iDcliente nombre del cliente propietario
+   * @param nombreFichero objeto con el fichero a guardar
+   * @return true si se subio con exito
+   * @throws RemoteException
+   *   
+   *************************************************************************** */
+  public Boolean borrarFichero (String iDCliente, String nombreFichero) throws RemoteException
+    {
+	Boolean resultado=false;
+	//sabemos que existe, luego lo 
+	File borrar=new File(FICHEROS_DE_REPOS+"//"+nickRepositorio+"//"+iDCliente+"//"+nombreFichero);
+	resultado=borrar.delete();
+	return resultado;  
+    }//fin borarFichero
+  
+
+     
+      
+}//fin clase ClOperadorImpl

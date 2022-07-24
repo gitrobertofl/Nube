@@ -1,0 +1,112 @@
+
+package usuario;
+//import java.util.Vector;
+import java.rmi.*;
+import java.rmi.server.*;
+
+import java.io.*;
+
+
+/**
+ * <div>Servicio Cliente-Operador:</div>
+ * <div>Este servicio se encarga de las operaciones de subida de ficheros al
+ * repositorio y borrado de los mismos. El servicio Gestor del servidor responde a la petici�n del 
+ * cliente envi�ndole la URL de este servicio para que pueda completar su operaci�n. </div>
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+
+ */
+public class ServicioClOperadorImpl extends UnicastRemoteObject
+                            implements ServicioClOperadorInterface
+  {
+  private String nickRepositorio;//nombre que identifica este Repositorio
+   
+  private static final long serialVersionUID = 123456789L;
+  
+
+  /**
+   * Constructor por defecto no hacer nada
+   */
+  public ServicioClOperadorImpl() throws RemoteException
+    {
+    super();
+    }
+
+  /**
+   * Constructor en el que obtiene el nombre de repositorio
+   */
+  public ServicioClOperadorImpl(String nombre) throws RemoteException
+    {
+    super();
+    
+    this.nickRepositorio=nombre;
+    }
+  
+  public void setNicRepositorio(String nombre)throws RemoteException
+    {
+    nickRepositorio=nombre;  
+    }
+  public String getNickRepositorio() throws RemoteException   
+    {
+    return nickRepositorio;
+    }  
+  
+    
+  public Boolean subirFichero (String IDCliente,Fichero fichero) throws RemoteException   
+    {
+    Boolean resultado=true;
+    System.out.println("se ha anadido un objeto fichero nombre "+fichero.obtenerNombre()+
+       "propietario "+fichero.obtenerPropietario()+" y un tama�o de "+fichero.obtenerPeso()+" bytes");
+     File salida=new File(nickRepositorio+"//"+IDCliente+"//"+fichero.obtenerNombre());
+         try {
+     
+      OutputStream outputStream = new FileOutputStream(salida);
+      resultado=fichero.escribirEn(outputStream);
+      
+      
+      
+    } catch (FileNotFoundException e) {
+      System.out.println("SIN GUI: Fichero no encontrado");
+    } 
+         
+    
+    
+    return resultado;    
+    }//fin subirFichero
+    
+    
+  
+  public Boolean borrarFichero (String IDCliente, String nombreFichero) throws RemoteException
+    {
+	Boolean resultado=false;
+	//sabemos que existe, luego lo 
+	File borrar=new File(nickRepositorio+"//"+IDCliente+"//"+nombreFichero);
+	resultado=borrar.delete();
+	//Fichero  fichero= new Fichero(nombreFichero,iDCliente);
+		  
+	  
+	return resultado;  
+    }
+  
+  
+  
+  
+  
+   //pruebas 
+      public String msgServicioClOperador(String mensaje)
+                    throws RemoteException
+     {
+       String msgRetorno="msg desde callback";
+      System.out.println("mensaje desde callback para enviar");
+      return msgRetorno;
+      
+      }//fin setConfTablero el tablero
+              
+      
+     
+      
+}//fin clase CallBackJugdorImpl

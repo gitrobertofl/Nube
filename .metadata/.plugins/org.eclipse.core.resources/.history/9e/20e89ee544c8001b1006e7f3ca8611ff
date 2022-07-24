@@ -1,0 +1,313 @@
+package servidor; 
+ 
+
+import java.rmi.*;
+import java.rmi.server.*;
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA DEL OTRO PAQUETE*/
+import usuario.ServicioSrOperadorInterface;
+
+
+/* FIN INTERFACE REMOTA*/
+
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS 
+ *
+ * <div>Esta es la interface remota del servicio gestor . Implementa los 
+ * metodos necesarios para permitir la comunicacion del servidor con los 
+ * Clientes remotos</div>
+ *
+ *
+ * <div>Extiende Remote para exportacion RMI</div>
+ * 
+ * <div>En este clase tendremos una referencia al servicio de datos</div>
+ 
+ * 
+ * <div>Con licencia GPL v3</div>
+ *
+ *  @see ServicioDatosInterface,ServicioAutenticacionInterface
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ * 
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20201205
+ * 
+ ********************************************************************************/
+public class ServicioGestorImpl extends UnicastRemoteObject
+                            implements ServicioGestorInterface 
+  {
+  /*==============================================================================
+   * Atributos de la clase
+   ===============================================================================*/ 
+  private static final long serialVersionUID = 123456789L;
+  private ServicioDatosInterface BDRemota;
+  
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/  
+      
+  /********************************************************************************
+   * Constructor por defecto. NO hace nada
+   *******************************************************************************/
+  public ServicioGestorImpl()throws RemoteException
+    {
+    super();
+    }//fin constructor ()
+
+  
+  /********************************************************************************
+   * Constructor que recibe como parametro una referencia valida del servicio de 
+   * base de datos remoto, asignandola al atributo base de datos de esta clase.
+   * 
+   * @param ServicioDatosInterface servicio de datos
+   * 
+   *******************************************************************************/  
+  public ServicioGestorImpl(ServicioDatosInterface BD)throws RemoteException
+    {
+    super();
+    this.BDRemota=BD;
+    }//fin constructor(bd)
+
+    
+  /*================================================================================
+     Metodos publicos 
+   ================================================================================*/  
+  
+   //metodos de registro/desregistro de servicios
+
+  /********************************************************************************
+   * <div>Este metodo registra los servicios del repositorio (servidor y cliente).
+   * Para ello recibe la referencia a los objetos remotos de los dos servicios
+   * junto con el nombre de repositorio. Como el servicio esta en el mismo host
+   * que el registro, llama al método correspondiente de MiRegistroRMI</div>
+   * 
+   * @param servicioSrOperador,servicioClOperador,iDRepositorio
+   * 
+   *******************************************************************************/   
+  public void registraServiciosRepositorio(String iDRepositorio,
+                                Remote servicioSrOperador,
+                                Remote servicioClOperador)
+             throws RemoteException,AlreadyBoundException
+     {
+	 MiRegistroRMI.registrarObjetoRemoto
+					(NubeRMI.getBindRepoSr()+iDRepositorio,servicioSrOperador);
+	 MiRegistroRMI.registrarObjetoRemoto
+					(NubeRMI.getBindRepoCl()+iDRepositorio,servicioClOperador);
+	 }//fin registra serviciosRepositorio
+     
+  /********************************************************************************
+   * <div>Este metodo registra el servicio de Cliente.
+   * Para ello recibe la referencia al objeto remoto del servicio
+   * junto con el nombre de cliente. Como el servicio esta en el mismo host
+   * que el registro, llama al método correspondiente de MiRegistroRMI</div>
+   * 
+   * @param ServicioDiscoCliente,iDCliente
+   * 
+   *******************************************************************************/   
+  public void registraServicioCliente(String iDCliente,
+                                        Remote servicioDiscoCliente)
+              throws RemoteException,AlreadyBoundException
+     
+	 MiRegistroRMI.registrarObjetoRemoto
+					(NubeRMI.getBindDiscoCliente()+iDCliente,servicioDiscoCliente); 
+     }//fin registraServicioCliente         
+
+  /********************************************************************************
+   * <div>Una vez que el repositorio deja de usarse (se cierra su sesion, hay que 
+   *  desregistrar los servicios que este prestaba. Para ello solo necesita el 
+   *  nombre del repositorio </div>
+   * 
+   * @param iDRepositorio
+   * 
+   *******************************************************************************/   
+  public void desRegistrarServiciosRepositorio(String IDRepositorio)           
+             throws RemoteException,NotBoundException
+    {
+    MiRegistroRMI.desRegistrarObjetoRemoto(NubeRMI.getBindRepoSr()+IDRepositorio);
+    MiRegistroRMI.desRegistrarObjetoRemoto(NubeRMI.getBindRepoCl()+IDRepositorio);
+    }//fin desregistrar servicios repositorio          
+             
+  /********************************************************************************
+   * <div>Una vez que el cliente deja de usarse (se cierra su sesion, hay que 
+   *  desregistrar el servicio que prestaba. Para ello solo necesita el 
+   *  nombre del cliente </div>
+   * 
+   * @param iDCliente
+   * 
+   *******************************************************************************/   
+  public void desRegistrarServicioCliente(String IDCliente)
+             throws RemoteException,NotBoundException
+    {
+    MiRegistroRMI.desRegistrarObjetoRemoto(NubeRMI.getBindDiscoCliente()+IDCliente);
+    }//fin desregistro servicio cliente        
+     
+  //metodos que hablan con repositorio para procesar ficheros	 
+	 
+  /****************************************************************************
+   * Obtiene el ID del repositorio del cliente del parametro, si lo tienen
+   * 
+   * @param IDCliente ID del ciente
+   * @return cadena con el ID del repositorio asignado. Si no lo tiene recibe
+   *  la cadena vacia "".
+   * 
+   ***************************************************************************/  
+  public String repoAsignadoCliente(String iDCliente)
+         throws RemoteException
+    {
+    return BDRemota.obtenerRepoClie(iDCliente);
+    }//fin repoAsignadoCliente
+
+  /****************************************************************************
+   * <div>Le pide al repositorio IDRepoAsignado, a traves
+   * del servicio SR del mismo, que le cree una carpeta al cliente si no la 
+   * tenia ya creada</div>
+   * 
+   * @param iDCliente, iDRepoAsignado
+   * @return true si se creo la carpeta y false en caso contrario.
+   * 
+   ***************************************************************************/  
+  public Boolean  carpetaClienteEnRepo(String iDCliente, String iDRepoAsignado)
+		  throws RemoteException, NotBoundException
+    {
+    Boolean resultado=false;    
+    resultado=((ServicioSrOperadorInterface)
+                  MiRegistroRMI.getRefRegistroRMI().
+                    lookup(NubeRMI.getBindRepoSr()+iDRepoAsignado))
+					.carpetaParaCliente(iDCliente);
+    return resultado;
+    }//fin carpetaClienteEnRepo  
+   
+  /*********************************************************************************
+   * <div>existeFichero le pide al servicio de datos si ya existe el fichero 
+   * para el cliente y repositorio correspondiente</div>
+   * 
+   * @param requiere cadena con el ID del cliente
+   * @param requiere cadena con el ID del repositorio
+   * @param requiere cadena con el nombre del fichero (sin ruta)
+   * @return TRUE si se encontro, FALSE en caso contrario.
+   ********************************************************************************/  
+  public Boolean existeFichero(String IDCliente, String IDRepo,String nombreFichero)
+        throws RemoteException
+    {
+    return BDRemota.existeFichero(IDCliente,IDRepo,nombreFichero);
+    }// fin public Boolean existeFichero  
+
+  /******************************************************************************
+   * <div> Le pide al servicio de datos que anada el nombre de fichero del 
+   * cliente y repositorio indicado</div>
+   * <div> no comprueba que el cliente y repositorio estan asociados</div>
+   * 
+   * @param cadena con el ID de cliente
+   * @param cadena con el ID de repositorio
+   * @param cadena con el nombre del fichero (sin ruta)
+   * 
+   *****************************************************************************/  
+  public Boolean subirFichero(String IDCliente, String IDRepo,String nombreFichero)
+         throws RemoteException
+    {
+    Boolean resultado=false;
+    BDRemota.subirFichero(IDCliente,IDRepo,nombreFichero);    
+    return resultado;
+    }//fin subirfichero
+
+  /******************************************************************************
+   * <div> Le dice al repositorio iDRepo, a través de su servicio SR, que el
+   * cliente iDCliente  quiere bajar el fichero nombreFichero.</div>
+   * <div> comprueba previamente a traves del servicio de datos si el fichero
+   * existe.</div>
+   * 
+   * @param cadena con el ID de cliente
+   * @param cadena con el ID de repositorio
+   * @param cadena con el nombre del fichero (sin ruta)
+   * 
+   *****************************************************************************/  
+  public Boolean bajarFichero(String iDCliente, String iDRepo,String nombreFichero) 
+         throws RemoteException,NotBoundException
+    {
+    Boolean resultado=false;
+    resultado=BDRemota.existeFichero(iDCliente,iDRepo,nombreFichero);    
+    //si existe, notifica a repositorio que el cliente quiere su fichero    
+    if (resultado)
+      //le pasa a SrRepo los datos del cliente para bajar el fichero	
+        resultado=((ServicioSrOperadorInterface)
+                MiRegistroRMI.getRefRegistroRMI().lookup(NubeRMI.getBindRepoSr()+iDRepo))
+				.bajarFichero(iDCliente,nombreFichero);
+    return resultado;
+    }//fin bajarFichero
+   
+  /******************************************************************************
+   * <div> Le pide al servicio de datos que borre el nombre de fichero del 
+   * cliente y repositorio indicado</div>
+   * <div> no comprueba que el cliente y repositorio estan asociados</div>
+   * 
+   * @param cadena con el ID de cliente
+   * @param cadena con el ID de repositorio
+   * @param cadena con el nombre del fichero (sin ruta)
+   * 
+   *****************************************************************************/  
+  public Boolean borrarFichero(String iDCliente, String iDRepo,String nombreFichero) 
+	         throws RemoteException
+	{
+	return BDRemota.borrarFichero(iDCliente,iDRepo,nombreFichero) ;
+	}//fin borrar fichero
+
+  /******************************************************************************
+   * <div> Le pide al servicio de datos que marque el nombre de fichero del 
+   * cliente y repositorio indicado como compartido con el resto de clientes</div>
+   * <div> no comprueba que el cliente y repositorio estan asociados</div>
+   * 
+   * @param cadena con el ID de cliente
+   * @param cadena con el ID de repositorio
+   * @param cadena con el nombre del fichero (sin ruta)
+   * 
+   *****************************************************************************/  
+  public Boolean compartirFichero(String iDCliente, String iDRepoAsignado, String nombreFichero) 
+	         throws RemoteException
+	{
+	return BDRemota.compartirFichero(iDCliente,iDRepoAsignado,nombreFichero);  
+	}//fin borrar fichero
+
+  //metodos para obtener listados para usuarios
+
+  /******************************************************************************
+   * <div> Le pide al servicio de datos un listadoClientes, que es una consulta
+   * de todos los clientes registrados</div>
+   * 
+   * @return cadena con todos los clientes e IDsesion separados por salto de linea
+   *****************************************************************************/
+  public String getListadoClientesSistema() throws RemoteException
+    {
+    return BDRemota.getListadoClientes();    
+    }//fin getListadoClientessSistema
+    
+  /******************************************************************************
+   * <div> Le pide al servicio de datos un ListadoClientesRepo que es una consulta
+   *  de los clientes de un repositorio concreto</div>
+   * 
+   * @param requiere el ID de un repositorio
+   * @return cadena con los ID de los clientes asociados al repositorio del par�metro
+   *****************************************************************************/   
+  public String getListadoClientesRepo(String nickRepositorio)
+         throws RemoteException
+    {
+    return BDRemota.listadoClientesRepo(nickRepositorio);
+    }// fin getlistadoclientesrepo
+  
+  /******************************************************************************
+   * <div>Le pide al servicio de diatos un listadoFicheroCliente que una consulta
+   *  de los ficheros a los que tiene acceso el cliente iDCLiente
+   * 
+   * @param requiere el ID de un cliente (no es requerido que esta asociado)
+   * @return cadena con los nombres de los ficheros almacenados(sin ruta)
+   *****************************************************************************/  
+  public String getListadoFicherosCliente(String iDCliente)       
+         throws RemoteException
+      {
+      return BDRemota.getListadoFicherosCliente(iDCliente);  
+      }//fin listadoFicheroscliente
+
+  }//fin ServicioGestorImpl

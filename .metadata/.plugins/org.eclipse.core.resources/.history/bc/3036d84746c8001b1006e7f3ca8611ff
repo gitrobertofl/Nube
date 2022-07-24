@@ -1,0 +1,85 @@
+package servidor; 
+//import java.io.Serializable;
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ *  <div>Esta clase representa la asociacion de los clientes con los repositorio
+ *   <div> sus campos son:
+ *   <ul><li>nombre de cliente .- Una cadena de tamano indeterminado.</li>
+ *   <ul><li> Nombre de repositorio.- Una cadena de tamano indeterminado</li>
+ *
+ *   Todos los metodos estan synchronized para evitar problemas de concurrencia
+ *
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * 
+ * @version 20201106
+ * 
+ ********************************************************************************/
+
+public class RepoClieBD// implements Serializable
+  {
+  /*==============================================================================
+   * Atributos de la clase
+   ===============================================================================*/    
+  private String nombreCliente;
+  private String nombreRepositorio;
+  
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/    
+  /**********************************************************************************
+   * El constructor por defecto crea un RepoClie con nombre y password 
+   * en blanco 
+   *********************************************************************************/
+  public RepoClieBD()
+    {
+    this.nombreCliente="";
+    this.nombreRepositorio="";
+    }//fin constructor por defecto
+  /**********************************************************************************
+   * Este constructor recibe como argumentos dos cadenas con el nombre de RepoClie y password, 
+   * que asigna a los atributos. El RepoClie no esta activo.
+   *********************************************************************************/
+  public RepoClieBD(String IDCliente, String IDRepo)
+    {
+    this.nombreCliente=IDCliente;
+    this.nombreRepositorio=IDRepo;
+    }//fin constructor RepoClie (clie,repo)
+  /*======================================================================
+   * Metodos publicos
+   * ==============================================================================*/    
+  /**********************************************************************************
+   * Este metodo obtiene la referencia a una cadena (String) con el contenido del atributo nombre
+   * de Cliente
+   * 
+   * @return String con el nombre de RepoClie asignado
+   *********************************************************************************/
+  public synchronized String getNombreCliente()
+    {
+    return this.nombreCliente;
+    }
+  /**********************************************************************************
+   * Este metodo obtiene la referencia a una cadena (String) con el contenido del atributo
+   * password
+   * 
+   * @return String con la contraseÃ±a del RepoClie
+   *********************************************************************************/
+  public synchronized String getNombreRepositorio()
+    {
+    return this.nombreRepositorio;
+    }
+    
+    public String toString()
+      {
+      return nombreRepositorio+" "+nombreCliente;  
+        }
+    
+
+  
+}//fin clase

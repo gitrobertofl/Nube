@@ -1,0 +1,9 @@
+package usuario;
+
+public class Cliente2 {
+
+	public Cliente2() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

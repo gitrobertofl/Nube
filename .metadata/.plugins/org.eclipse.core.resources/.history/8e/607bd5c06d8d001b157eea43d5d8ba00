@@ -1,0 +1,52 @@
+package usuario;
+
+//import java.util.Vector;
+
+/**
+ * Esta clase va a implementar el interface del entorno de usuario en modo 
+ * consola. 
+ * Contiene los m�todos para la visualizaci�n de cada men�
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ */
+
+public interface GUIUsuarioInterface
+{
+    /**
+     * An example of a method header - replace this comment with your own
+     * 
+     * @param  y    a sample parameter for a method
+     * @return        the result produced by sampleMethod 
+     */
+    public Character menuInicio();
+    public Character menuUsuarioAcreditado(String IDusuario);
+    
+    public AcreditacionRepositorio login(Character tipoLogin);
+    public void errorAcreditacion(Character tipoLogin);
+    public void altaRepositorioCorrecta();
+   
+    
+    public String obtenerIDCliente(String IDRepositorio);
+    
+    public void finDePrograma();
+    
+    //listados
+    public void verListadoClientes(String IDRepo, String listado);
+    
+    public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado);
+    
+    //mensajes
+    
+    public void errorRegistroRMI();
+    
+    public void errorAccesoRemotoObjeto(String en);
+    
+    public void errorNoEncuentraObjRemoto(String er);
+    
+    public void errorGenerico(String en);
+    
+}

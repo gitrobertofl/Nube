@@ -1,0 +1,112 @@
+package usuario;
+
+import java.rmi.RemoteException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+
+
+
+//import servidor.NubeRMI;
+
+public class Repositorio extends Usuario {
+  //variables de instancia
+  //creamos un objeto para el servicio del repositorio para servidor
+  private ServicioSrOperadorInterface servicioSrOperador;
+  //creamos un objeto para el servicio del repositorio para el cliente
+  private ServicioClOperadorInterface servicioClOperador;
+	
+	
+  public Repositorio()
+	{
+	super(TIPO_REPOSITORIO);	
+	}//FIN CONSTRUCTOR Repositorio()
+
+  @Override
+  protected void inicioSesionUsuario(String iDRepositorio) 
+			throws RemoteException, AlreadyBoundException,NotBoundException
+	{
+	//esta acreditado: obtener y marcar como activo y registrarlo en RMI
+    servicioSrOperador=new ServicioSrOperadorImpl(iDRepositorio);
+    servicioClOperador=new ServicioClOperadorImpl(iDRepositorio);
+      
+      
+    System.out.println("hemos creado el objeto sr "+ servicioSrOperador.getNickRepositorio());
+    System.out.println("hemos creado el objeto cl "+ servicioClOperador.getNickRepositorio());
+        
+    // los registra en RMI. con gestor, NubeRMI no puede al ser otro host
+    gestor.registraServiciosRepositorio(iDRepositorio,servicioSrOperador,servicioClOperador); 
+        
+           
+    //entramos en menu repositorio acreditado
+    menuRepositorio(iDRepositorio);
+        //como vamos a salir, marcamos como repositorio inactivo, 
+        //�y si tiene un cliente enganchado? avisar o no hacerlo
+        autenticacion.desactivarUsuario(iDRepositorio,tipoUsuario);
+        // desregistramos los servicios de RMI
+        gestor.desRegistrarServiciosRepositorio(iDRepositorio);
+        	
+		
+		
+		
+	  }//fin inicioSesionUsuairo
+	
+	
+	public void menuRepositorio(String iDRepositorio)
+    {
+    //opcion de menu
+    Character opcion='0';
+    
+    String iDCliente="";
+    
+    try
+      {
+      do
+          {
+          opcion=gUI.menuUsuarioAcreditado(iDRepositorio);
+          
+          System.out.println("opcion devuelta es "+opcion);
+          
+          switch (opcion)
+           {
+           case '1'://listar clientes
+                    gUI.verListadoClientes(iDRepositorio,gestor.getListadoClientesRepo(iDRepositorio));
+                    //vuelve al menu de inicio de repositorio
+                    opcion='0';
+                    break;
+           case '2'://listar ficheros de cliente
+                    //obtenemos nombre de cliente por consola y con �l visualizamos el listado
+                    
+                    
+                    
+                    gUI.verListadoFicherosCliente(iDRepositorio,
+                                                  gUI.obtenerIDCliente(iDRepositorio),
+                                                  gestor.getListadoFicherosCliente(iDRepositorio,iDCliente));
+                    
+                    //vuelve al menu de inicio de repositorio
+                    opcion='0'; 
+                    break;
+           case '3'://cerrar sesion de Repositorio (logout)
+                    //no hace nada pues ya cierra el menu inicial los obj. remotos 
+                    break;
+           default :System.out.print("opcion erronea");   
+           }//fin switch
+       
+          }
+        while(opcion!='3');
+      
+      
+        }//fin try main
+       catch (RemoteException re)
+        {
+        gUI.errorAccesoRemotoObjeto(re.toString()); 
+        }//fin catch REmoteException
+        catch (Exception e)
+        {
+         gUI.errorGenerico(e.toString());
+        
+        }//fin catch
+    
+    }//fin menu
+	
+	
+}//fin clase Repositorio

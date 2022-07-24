@@ -1,0 +1,94 @@
+package usuario;
+
+//import java.io.File;
+
+/**
+ * Write a description of class Configuracion here.
+ * 
+ * se puede instanciar para cambiar la configuracion por defecto
+ * sino no hace falta
+ * 
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Configuracion
+{
+    // variables de clase
+    //la IP del host con el servicio RMI   
+    public static String IPHostRegistroRMI="localhost";
+    //EL PUERT DE ESCUCHA DEL REGISTRO RMI
+    public static Integer puertoServidorRMI=1099;  
+    //nombre objeto remoto para gestor
+    //public static String  bindGestor="servidor/gestor";
+    //nombre objeto remoto para autenticaci�n
+    //public static String bindAutenticacion="servidor/autenticacion";
+    //nombre objeto remoto servicio repo servidor
+    //public static String bindRepoSr="Repositorio/SR/";
+    //nombre objeto remoto servicio repo cliente
+    //public static String bindRepoCl="Repositorio/CL/";
+    //directorio raiz donde se almacenan los datos del repositorio 
+    //public static String directorioContenido="repositorio//contenido";
+    
+    
+    
+    
+    /**
+     * Constructor for objects of class Configuracion
+     */
+    public Configuracion()
+      {
+      //el directorio raiz del paquete ser� la ubicaci�n actual del repositorio
+      //File directorio=new File(directorioContenido);//no vale; cambiar a nombre repo
+      //Boolean res=directorio.mkdirs();
+      
+      //System.out.println("el nuevo path relativo es "+directorio2.getPath());
+      /*
+      directorioRaiz=new File(System.getProperty("user.dir"));
+      String directorio= directorioRaiz.getPath() +"directorio2.getPath();
+      System.out.println("el path es "+directorio);
+      */
+      
+      }
+
+    /**
+     * An example of a method - replace this comment with your own
+     * 
+     * @papublic static String getIPServidorRMI()
+    {
+        return IPHostRegistroRMI;
+    }//fin getIPServidor
+    
+    public static Integer getPuertoServidorRMI()
+      {
+       return puertoServidorRMI;   
+       }ram  y   a sample parameter for a method
+     * @return     the sum of x and y 
+     */
+    
+    /*
+    public static String getBindRegObj()
+      {
+      return bindRegObj;  
+      }
+    
+    public static String getBindGestor()
+      {
+      return bindGestor;  
+      }
+   
+    public static String getBindAutenticacion()
+      {
+      return bindAutenticacion;  
+      }
+   */  
+    public static void setIPServidorRMI(String IP)
+      {
+      IPHostRegistroRMI=IP;  
+      }
+  /*  
+    public static String getDirectorioContenido()
+    {  
+    return directorioContenido;   
+    }*/
+}

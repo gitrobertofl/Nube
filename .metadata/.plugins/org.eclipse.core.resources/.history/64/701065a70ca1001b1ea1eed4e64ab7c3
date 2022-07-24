@@ -1,0 +1,461 @@
+ package cliente;
+
+
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA AL OTRO PAQUETE*/
+
+import servidor.ServicioGestorInterface;
+import servidor.ServicioAutenticacionInterface;
+
+import repositorio.ServicioClOperadorInterface;
+import repositorio.Fichero;
+//import repositorio.RegistroRMI;
+import servidor.MiRegistroRMI;
+import servidor.NubeRMI;
+//import servidor.RegObjInterface;
+
+/*FIN INTERFAZ REMOTA*/
+
+import java.rmi.*;
+//import java.rmi.server.*;
+//import java.rmi.registry.Registry;
+//import java.rmi. registry.LocateRegistry;
+//import java.net.*;
+//import java.io.File;
+
+/******************************************************************************
+ * 
+ * *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21).
+ *
+ * <div>Esta es la clase que representa entidad Cliente.
+ * 
+ * 
+ * 
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ ******************************************************************************/
+public class Cliente
+  {
+    //constantes de clase
+  //** Configuraci�n del repositorio
+  
+  //variables de clase.
+  //referencia a servicio RMI
+  //static NubeRMI servicioRMI;
+  //creamos los objetos proxy con acceso a servicios remotos
+  //private static RegObjInterface registroRMIRemoto; //registro remoto
+  private static ServicioGestorInterface gestor; //servicio gestor en servidor
+  private static ServicioAutenticacionInterface autenticacion; //servicio autenticaci�n en ser
+  //creamos un objeto para el servicio del cliente
+  private static ServicioDiscoClienteInterface servicioDiscoCliente;
+  //ID de Sesion
+  private static String IDSesion="";
+  
+  //ID repositorio asignado
+  private static String URLSvcRepo="";//no
+  //objeto remoto para conexi�n con repositorio
+  private static ServicioClOperadorInterface svcClOperador;
+  //ID repositorio asignado a este cliente
+  private static String IDRepoAsignado="";
+  
+  
+  
+      
+  public static void main (String args[])
+    {
+    //=============================================================================
+    // constantes 
+    //=============================================================================
+    //** Configuraci�n del cliente
+    // DATO IMPORTANTE: la IP del servicio RMI
+    final String IPHostRegistroRMI=Configuracion.IPHostRegistroRMI;//"localhost";
+    // DATO IMPORTANTE: EL PUERT DE ESCUCHA DEL REGISTRO RMI
+    final Integer puertoRMI=Configuracion.puertoServidorRMI;//1099;
+    // datos proxy objeto remoto para registro repositorio
+    //final String bindRegObj=Configuracion.bindRegObj;//"servidor/regobj";
+    //datos proxy local. el Repositorio del servidor.Servicios: gestor y autenticacion
+    //final String bindGestor=Configuracion.bindGestor;//"servidor/gestor"; 
+    //final String bindAutenticacion=Configuracion.bindAutenticacion;//"servidor/autenticacion";
+        
+    
+    //=============================================================================
+    //variables 
+    //=============================================================================
+    
+        String mensaje; //luego se puede eleminiar
+    
+    //=============================================================================
+    // ejecuci�n 
+    //=============================================================================
+    //carga del gestor de seguridad
+    
+    
+    //System.setSecurityManager(new RMISecurityManager( ));
+    
+        
+        
+    //refRegistry tiene todos los datos del registro RMI
+    
+    //OJO: cambiar para que funcione en varios hosts.
+    //se obtiene una referencia al servidor RMI
+    //RegistroRMI
+    //servicioRMI=new NubeRMI(IPHostRegistroRMI,puertoRMI);
+    MiRegistroRMI.refAMiRegRMI(IPHostRegistroRMI,puertoRMI);
+    //visualizacin IU
+    GUIClienteInterface GUI = new GUIClienteTexto(); 
+    //comprobamos que no haya fallado la referencia a registro (null)=error
+    if (MiRegistroRMI.getRefRegistroRMI()==null)
+      {
+      GUI.errorRegistroRMI();
+      }//fin si registro no existe
+     else
+      {
+      //si no hubo error de conexi�n con el registro
+      try
+        {
+        //inicializamos el proxy objeto remoto de registro de objetos remotos desde otro host
+        //registroRMIRemoto=(RegObjInterface) servicioRMI.getRefRegistroRMI().lookup(bindRegObj);
+        //inicializamos los objetos proxy con acceso a servicios remotos
+        gestor=NubeRMI.obtenerRefSvrGestor();
+        autenticacion=NubeRMI.obtenerRefSvrAutenticacion();
+        
+        /*
+        gestor=(ServicioGestorInterface)servicioRMI.getRefRegistroRMI().lookup(bindGestor);
+        autenticacion=
+          (ServicioAutenticacionInterface)servicioRMI.getRefRegistroRMI().lookup(bindAutenticacion);
+        */
+          //no error de registro ni de proxy a Servidor
+        System.out.println("MSG:no error de registro ni de proxy a servidor:reg, aut y gestor");
+        
+        //no creamos el servicio discoCliente hasta que se autentifique
+             
+        
+        /*ZONA PRUEBAS*/
+        
+        
+        
+        //si no hubo error, servicios registrados
+        System.out.println("MSG Registrados los servicios\n");
+        //una vez montada la estructura distribuida, ver pantalla. 
+      
+          
+      
+        //invocar el metodo remoto
+        mensaje=gestor.servicioGestor ("desde Cliente gestor");
+        System.out.println("servidor gestor dice : "+ mensaje);
+        //mensaje=autenticacion.servicioAutenticacion ("desde Cliente autenticacion");
+        System.out.println("servidor autenticacon dice : "+ mensaje);
+        
+        /*FIN ZONA PRUEBAS*/
+        
+        
+      
+        //una vez montado el esquema remoto, iniciamos el menu principal
+        menuInicio(GUI);
+       
+      
+        }//fin try main
+        catch (RemoteException re)
+        {
+         GUI.errorAccesoRemotoObjeto(re.toString());  
+        }//fin catch REmoteException
+       catch (NotBoundException be)
+        {
+        GUI.errorNoEncuentraObjRemoto(be.toString());  
+        }//fin catchnotboundException
+       catch (Exception e)
+        {
+        GUI.errorGenerico(e.toString());  
+        }//fin catch
+      
+      
+      }//fin else no error registro rmi
+    
+    System.exit(0); 
+    }//fin del main   
+  /**
+   * Este mEtodo realiza la l�gica de autenticaci�n del Cliente:
+   * operacion 1.- alta de Cliente
+   * operacion 2.- autenticaci�n de Cliente
+   * operacion 3.- Salir del programa
+   */  
+    
+  public static void menuInicio(GUIClienteInterface GUI)
+    {
+    //opcion de menu
+    Character opcion='0';
+    //creamos el interfaz de usuario
+    //GUIClienteInterface GUI = new GUIClienteTexto(); 
+    //creamos una acreditacion de Cliente
+    AcreditacionCliente acreditacionCliente;
+    try
+      {
+      do
+        {
+        //capturamos la operaci�n a realizar desde el GUI    
+        opcion=GUI.menuInicioCliente();
+        switch (opcion)
+          {
+          case '1'://ALTA Cliente
+                    //obtenemos nick y contrase�a por teclado  
+                    acreditacionCliente=GUI.login(opcion);
+                    //tenemos los datos de acreditaci�n
+                    //llama al servicio de autentificaci�n:alta de Cliente
+                    //informa si hubo error o no
+                    
+                     //hacer con captura de errores de java. es m�s elegante
+                    //entonces: 
+                    // si true: alta correcta
+                    // si false: error
+                    if (autenticacion.altaUsuario(acreditacionCliente.getNombre(),
+                                                    acreditacionCliente.getPassword(),"cliente"))
+                      {
+                      GUI.altaClienteCorrecta();    
+                      }
+                     else
+                      {
+                      //excepcion
+                      GUI.errorAcreditacion(opcion);  
+                      }
+                    //como permite m�s altas, no se registra el obj remoto.
+                    //para dar de alta no hace falta registrar
+                    //vuelve al menu de inicio (no entra directamente)
+                    opcion='0';
+                    break;
+           case '2'://inicio sesion
+                    //obtenemos nick y contrase�a por teclado  
+                    acreditacionCliente=GUI.login(opcion);
+                    //llama al servicio de autentificaci�n de repositorio
+                    //no permite dos sesiones
+                     //hacer con captura de errores de java. es m�s elegante
+                    //entonces: 
+                    // si cadena true: alta correcta
+                    // si "": error
+                    IDSesion= autenticacion.autenticarCliente(acreditacionCliente.getNombre(),
+                                                        acreditacionCliente.getPassword());
+                    //se ha marcado como activo. le asign� repo
+                    if (!IDSesion.equals(""))
+                      {
+                      //est� acreditado: ver repositorio activo antes
+                      
+                      
+                      // si repositorio asignado est� activo
+                      IDRepoAsignado=gestor.repoAsignadoCliente(acreditacionCliente.getNombre());
+                      //obtenemos referencia servicio cloperador del repo asignado
+                      svcClOperador=(ServicioClOperadorInterface) NubeRMI.obtenerRefClOperadorRepo(IDRepoAsignado);
+                      /*
+                      svcClOperador=(ServicioClOperadorInterface)
+                                    servicioRMI.getRefRegistroRMI().lookup(servicioRMI.getBindRepoCl()+IDRepoAsignado);
+                      */
+                      //ordenamos que nos reserve carpeta en ese repositorio, si no lo ten�a.
+                      gestor.carpetaClienteEnRepo(acreditacionCliente.getNombre(),IDRepoAsignado); 
+                      //registrar servicio discoCliente lo en RMI    
+                      servicioDiscoCliente=new ServicioDiscoClienteImpl(acreditacionCliente.getNombre());
+                      
+                      System.out.println("MSG:hemos creado el objeto del servicio disco cliente "+ servicioDiscoCliente.getNickCliente());   
+                      
+                      // lo registra en RMI 
+                      gestor.registraServicioCliente(acreditacionCliente.getNombre(),servicioDiscoCliente);
+                      /*
+                      registroRMIRemoto.registrarObjetoRemoto
+                            //"Cliente/"
+                            (Configuracion.bindDiscoCliente+acreditacionCliente.getNombre(),
+                                        servicioDiscoCliente);
+                      */
+                      System.out.println("MSG hemos registrado el objeto del servicio disco cliente "+ servicioDiscoCliente.getNickCliente()); 
+                      
+                      
+                      
+                      
+                      //entramos en menu acreditado 
+                      menuCliente(GUI,acreditacionCliente.getNombre());
+                      //como vamos a salir, marcamos como repositorio inactivo, 
+                      //�y si tiene un cliente enganchado? avisar o no hacerlo
+                      autenticacion.desactivarCliente(acreditacionCliente.getNombre()); 
+                      // desregistramos los servicios de RMI
+                      gestor.desRegistrarServicioCliente(acreditacionCliente.getNombre());
+                      /*
+                      registroRMIRemoto.desRegistrarObjetoRemoto
+                          //"Cliente/"
+                          (Configuracion.bindDiscoCliente+servicioDiscoCliente.getNickCliente());
+                    */
+                      
+                          
+                       }//fin si no error en sesi�n de cliente    
+                    
+                     else
+                      {
+                      //pantalla de error de acreditacion y vuelta al menu
+                      GUI.errorAcreditacion(opcion);
+                      }
+                    //en todo caso, (fin de sesiÃ³n o error) desregistramos el callback de RMI
+                    //vuelve al menu de inicio
+                    opcion='0'; 
+                    break;
+           case '3'://salir
+                    //pantalla informativa fin
+                    GUI.finDePrograma(); 
+                    break;
+           default :System.out.print("opcion erronea");   
+          }//fin switch
+        }
+      while(opcion!='3');
+      }//fin try main
+      catch (RemoteException re)
+      {
+      GUI.errorAccesoRemotoObjeto(re.toString());  
+      }//fin catch REmoteException
+     catch (AlreadyBoundException re)
+       {
+       System.err.println("ya existe el objeto enRMI o: gui"); 
+       }
+      
+     catch (NotBoundException re)
+       {
+       GUI.errorNoEncuentraObjRemoto(re.toString()); 
+        }
+      catch (Exception e)
+      {
+       GUI.errorGenerico(e.toString());  
+      }//fin catch
+    }//fin menuInicio
+  
+    
+    
+    
+    
+  public static void menuCliente(GUIClienteInterface GUI, String IDCliente)
+    {
+    //opcion de menu
+    Character opcion='0';
+    //creamos el interfaz de usuario
+    //GUIClienteInterface GUI = new GUIClienteTexto(); 
+    String nombreFichero="";
+    
+    try
+      {
+      do
+          {
+          opcion=GUI.menuClienteAcreditado(servicioDiscoCliente.getNickCliente());//cambiar a IDCliente
+          System.out.println("MSG opcion devuelta es "+opcion);
+          switch (opcion)
+           {
+           case '1'://subir fichero
+                    nombreFichero=GUI.nombreFichero(IDCliente); 
+                    //comprobamos que existe
+                    //si existe creamos el fichero, sino pantalla de error
+                    if (nombreFichero.equals(""))
+                      GUI.errorNombreFichero(IDCliente); 
+                     else
+                      
+                       //comprobamos si est� repetido
+                       if (gestor.existeFichero(IDCliente,IDRepoAsignado,nombreFichero)) 
+                         //cambiar el error
+                    	 System.out.println ("msg error fichero repetido GUI "+IDCliente);
+                         //GUI.errorFicheroRepe(IDCliente);
+                        else
+                         {
+                          Fichero fichero= new Fichero(nombreFichero,IDCliente);
+                         //notificamos fichero a la Base de datos (cliente,repo y nombre fichero)
+                         gestor.subirFichero(IDCliente,IDRepoAsignado,nombreFichero);
+                         //lo subimos al repositorio asignado
+                       
+                       
+                         //pedimos a svcClOperador que se quede con el fichero
+                         svcClOperador.subirFichero(IDCliente,fichero);
+                         //controlar si se subi� el fichero 
+                         
+                        }//fin si error de nombre de fichero
+                    
+                    
+                    
+                    
+           
+           
+           
+                    //vuelve al menu de inicio de juego
+                    opcion='0';
+                    break;
+           case '2'://bajar fichero
+                    nombreFichero=GUI.nombreFichero(IDCliente); 
+                    if (nombreFichero.equals(""))
+                      GUI.errorNombreFichero(IDCliente); 
+                     else
+                      {
+                      //gestor comprueba que existe, se lo pasa a repositorio y usa el serviciodiscocliente 
+                      gestor.bajarFichero(IDCliente,IDRepoAsignado,nombreFichero);
+                          //a la base de datos le da igual
+                      
+                      //pedimos a srvCloperador que nos de el fichero en cuesti�n para pasarlo a local
+                       
+                      
+                      }                
+                    
+           
+                    //vuelve al menu de inicio de juego
+                    opcion='0'; 
+                    break;
+           case '3'://borrar fichero
+                    nombreFichero=GUI.nombreFichero(IDCliente); 
+                    //comprobamos que existe
+                    //si existe creamos el fichero, sino pantalla de error
+                    if (nombreFichero.equals(""))
+                      GUI.errorNombreFichero(IDCliente); 
+                     else
+                      {
+                      //notificamos la baja a la base de datos
+                      
+                      //pedimos a srvCloperador que borre el fichero en cuesti�n
+                      
+                      
+                      }
+                    //vuelve al menu de inicio de juego
+                    opcion='0'; 
+                    break;
+           
+           case '4'://compartir fichero
+                    
+                    //vuelve al menu de inicio de inicio de juego
+                    opcion='0'; 
+                    break;
+           case '5'://listar ficheros
+                    GUI.verListadoFicherosCliente(IDRepoAsignado,
+                                                  IDCliente,
+                                                  gestor.getListadoFicherosCliente(IDRepoAsignado,IDCliente));
+                    //vuelve al menu de inicio de inicio de juego
+                    opcion='0'; 
+                    break;
+           case '6'://Listar clientes del sistema                    
+                     GUI.verListadoClientes(gestor.getListadoClientesSistema());
+                    //vuelve al menu de inicio de inicio de juego
+                    opcion='0'; 
+                    break; 
+           case '7'://cerrar sesi�n de Cliente (logout)
+           
+                    //no hace nada pues ya cierra el menu inicial los obj. remotos 
+                    break;
+           default :System.out.print("opcion erronea");   
+           }//fin switch
+       
+          }
+        while(opcion!='7');
+      
+      
+        }//fin try main
+        catch (RemoteException re)
+        {
+        GUI.errorAccesoRemotoObjeto(re.toString()); 
+        }//fin catch REmoteException
+        catch (Exception e)
+        {
+         GUI.errorGenerico(e.toString());
+        
+        }//fin catch
+    
+    }//fin menu de cliente    
+    
+  }//fin clase Cliente

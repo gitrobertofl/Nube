@@ -1,0 +1,157 @@
+package servidor; 
+import java.rmi.*;
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (19-20). BARQUITOS
+ *
+ * <div>Esta es la interface remota del servicio de datos. Implementa los 
+ * m�todos necesarios para permitir la comunciaci�n de la base de datos
+ * con el servidor remoto</div>
+ *
+ *
+ * <div>Extiende Remote para exportacion RMI</div>
+ * <div>Para evitar problemas de seguridad, incluye métodos para añadir y quitar
+ * binds al registro RMI</div>
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * 
+ * @version 20191207
+ * 
+ ********************************************************************************/
+
+public interface ServicioDatosInterface extends Remote
+  {
+  //m�todo de pruebas de conexi�n remota 
+  //public String decirHola(String nombre) throws RemoteException;
+  
+  /******************************************************************************
+   * <div>metodo remoto que que recibe un usuario nombre de usuario y contrase�a 
+   * y comprueba si esta en la base de datos</div>
+   * 
+   * @param usr Cadena con el nombre de usuario
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente est� acreditado y false si error
+   * 
+   *****************************************************************************/  
+  public String existeClienteAcreditado(String usr, String pwd) throws RemoteException;
+  
+  /******************************************************************************
+   * <div>metodo remoto que que recibe un IDRepositorio y su contrase�a 
+   * y comprueba si esta en la base de datos</div>
+   * 
+   * @param usr Cadena con el ID
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente est� acreditado y false si error
+   * 
+   *****************************************************************************/   
+  public String existeRepositorioAcreditado(String clienteID, String clientePwd)
+         throws RemoteException;
+         
+  public Boolean existeFichero(String IDCliente, String IDRepo,String nombreFichero)
+        throws RemoteException;
+         
+         
+  /******************************************************************************
+   * <div>M�todo remoto que que recibe un usuario nombre de usuario y contrase�a 
+   * y lo a�ade a la base de datos<div>
+   * 
+   * @param usr Cadena con el nombre de usuario
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente se a�adi� y false si error
+   * 
+   *****************************************************************************/  
+   public Boolean addCliente(String clienteID, String clientePwd)
+          throws RemoteException;  
+
+  /******************************************************************************
+   * <div>M�todo remoto que que recibe un idRepositorio y contrase�a 
+   * y lo a�ade a la base de datos<div>
+   * 
+   * @param usr Cadena con el nombre de usuario
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente se a�adi� y false si error
+   * 
+   *****************************************************************************/  
+  public Boolean addRepositorio(String clienteID, String clientePwd) 
+         throws RemoteException;
+  
+   /**
+   * 
+   * asigna un cliente a un repositorio existente
+   */
+  public String asignarRepoClie(String IDCliente)       
+         throws RemoteException;
+   
+   /**
+   * obtener repositorio asignado a cliente
+   * 
+   * se le da el id del cliente y devuelve cadena con el repo
+   * 
+   */
+   public  String obtenerRepoClie(String IDCliente) 
+            throws RemoteException;
+  
+   public void subirFichero(String IDCliente, String IDRepo,String nombreFichero)
+            throws RemoteException;   
+            
+    public Boolean bajarFichero(String IDCliente, String IDRepo,String nombreFichero)
+            throws RemoteException;  
+    
+    public Boolean borrarFichero(String IDCliente, String IDRepo, String nFichero)
+    		throws RemoteException;
+			
+	public Boolean compartirFichero(String IDCliente, String IDRepositorio, String nFichero)
+    		throws RemoteException;
+    
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarCliente(String IDCliente)
+         throws RemoteException;       
+         
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarRepositorio(String IDRepositorio)
+         throws RemoteException;
+   
+         
+         
+  /**
+   * obtenemos un listado con todos los repositorios registrados en el servidor
+   */
+  public String getListadoRepositorios() throws RemoteException;
+   
+ 
+  /**
+   * obtenemos un listado con todos los clientes registrados en el servidor
+   */
+  public String getListadoClientes() throws RemoteException;
+  
+ 
+  /**
+   * obtenemos un listado con todos los repositorios y sus clientes registrados en el servidor
+   */
+  public String getListadoRepoClie() throws RemoteException;
+  
+  /**
+   * obtenemos un listado de los clientes del repostorio
+   * @param cadena con el ID del Repositorio
+   */
+  public String listadoClientesRepo(String nickRepositorio)throws RemoteException;
+  
+  
+  public String getListadoFicherosCliente(String IDRepositorio, String IDCliente) throws RemoteException;
+  
+  
+  public void verBD()throws RemoteException;
+  
+  }//fin interfaz remota de base de datos
+    

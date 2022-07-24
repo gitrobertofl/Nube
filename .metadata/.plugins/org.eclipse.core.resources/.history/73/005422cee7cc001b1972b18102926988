@@ -1,0 +1,52 @@
+package usuario;
+
+import servidor.MiRegistroRMI;
+
+/******************************************************************************
+ * <div>Clase ejecutora de repositorio.</div>
+ * 
+ * <div> esta clase existe por la imposición del enunciado de ejecutar los
+ * clientes y repositorios sin parametros. 
+ * Utiliza la clase UsrUsuario para llamar a la parte de repositorio (herencia)
+ * 
+ * @see UsrUsuario
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20210601
+ *****************************************************************************/
+public class Repositorio
+  {
+  //parametro necesario para UsrUsuario;	
+  private static final String TIPO_USUARIO="repositorio";
+ 
+  /*****************************************************************************
+  *
+  *  Método principal de ejecución main. Prepara el acceso a los servicios
+  *  remotos de servidor.
+  *  Para determinar el tipo de entidad, repositorio,
+  *  necesita parámetro de entrada, instanciando la que corresponda.
+  *  
+  *
+  *  @param una cadena con el tipo de entidad
+  *
+ *************************************************************************** */
+  public static void main (String args[])
+    {
+	//gestor de seguridad
+    Usuario usuario;
+    usuario = new UsrRepositorio();
+	if (usuario.getConectadoConSRV())
+	  //una vez montado el esquema remoto, iniciamos el menu principal
+	  usuario.menuUsuario();    
+	 else
+   	  {	 
+	  GUIUsuarioInterface gUI = new GUIClienteTexto(TIPO_USUARIO);	 
+      gUI.finDePrograma();		 
+	  }
+    //termina todo  
+ 	System.exit(0); 
+		
+	}//fin del main
+  	  
+  }//fin clase repositorio

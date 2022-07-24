@@ -1,0 +1,123 @@
+package servidor; 
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA DEL OTRO PAQUETE*/
+
+//import cliente.ServicioDiscoClienteInterface;
+
+
+/*FIN INTERFAZ REMOTA*/
+
+import java.rmi.*;
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ * <div>Esta es la interface remota del servicio de autenticaci�n. Implementa los 
+ * m�todos necesarios para permitir la comunciaci�n del servidor con los 
+ * Clientes remotos</div>
+ *
+ *
+ * <div>Extiende Remote para exportacion RMI</div>
+ * 
+ * <div>Tiene m�todos para el alta de un Cliente en la base de datos, as� como
+ * para autentificarlo en el inicio de sesi�n</div>
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ * 
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20201103
+ * 
+ * 
+ ********************************************************************************/
+
+public interface ServicioAutenticacionInterface extends Remote
+  {
+  /**********************************************************************************
+   * Metodo remoto que recibe como parametros el ID y la contrasena de cliente y pwd
+   * junto con el tipo de usuario (cliente o repositorio)
+   * y pide que se anada a la base de datos si se puede.
+   * 
+   * @param IDUsuario cadena con el id del usuario
+   * @param pwd cadena con la contrasena del cliente
+   * @param una cadena que indica el tipo de usuario
+   * 
+   * @return Si ya existe o error, devuelve false,true en caso contrario. Por ejemplo
+   * 		si el tipo de usuario no existe y ya existe el usuario
+   *********************************************************************************/
+  public Boolean altaUsuario(String IDUsuario, String pwd, String tipoUsuario)
+        throws RemoteException;
+  /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de cliente y pwd
+   * y pide que se a�ada a la base de datos si se puede.
+   * 
+   * @param IDCliente cadena con el id del cliente
+   * @param pwd cadena con la contrase�a del cliente
+   * 
+   * @return Si ya existe o error, devuelve false,true en caso contrario
+   *********************************************************************************/
+  public Boolean altaCliente(String IDCliente, String pwd)
+        throws RemoteException;
+  
+  /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de repositorio
+   * y pide que se a�ada a la base de datos, si se puede.
+   * 
+   * @param IDRepositorio cadena con el id del repositorio
+   * @param pwd cadena con la contrase�a del repositorio
+   * 
+   * @return Si ya existe o error, devuelve false,true en caso contrario
+   *********************************************************************************/      
+  public Boolean altaRepositorio(String IDRepositorio, String pwd)
+        throws RemoteException;    
+  
+  /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de cliente 
+   * y pide a la base de datos si existe con estos datos.
+   * 
+   * @param IDCliente cadena con el id del cliente
+   * @param pwd cadena con la contrase�a del cliente
+   * 
+   * @return Si no existe ID o error en contrase�a, devuelve ""
+   *            ID de sesi�n (cadena aleatoria) en caso contrario
+    *********************************************************************************/
+  public String autenticarCliente(String IDRepositorio, String pwd) 
+                throws RemoteException;
+  
+  /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de repositorio 
+   * y pide a la base de datos si existe con estos datos.
+   * 
+   * @param IDCliente cadena con el id del repositorio
+   * @param pwd cadena con la contrase�a del repositorio
+   * 
+   * @return Si no existe ID o error en contrase�a, devuelve ""
+   *            ID de sesi�n (cadena aleatoria) en caso contrario
+   *********************************************************************************/               
+  public String autenticarRepositorio(String IDRepositorio, String pwd) 
+                throws RemoteException;            
+  
+                
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarCliente(String IDRepositorio)
+         throws RemoteException ;
+                
+   /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarRepositorio(String IDRepositorio)
+         throws RemoteException ;
+   
+         
+  //mensaje de prueba
+  public String servicioAutenticacion(String mensaje)
+                    throws RemoteException;
+      
+  }//fin interface ServicioAutenticacionInterface

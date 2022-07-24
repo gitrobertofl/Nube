@@ -1,0 +1,121 @@
+
+package usuario;
+
+import java.rmi.*;
+import java.rmi.server.*;
+
+import java.io.File;
+
+import servidor.MiRegistroRMI;
+import servidor.NubeRMI;
+  
+
+  
+ 
+ 
+
+/******************************************************************************************
+ * <div> Servicio Servidor-operador:</div>
+ *<div> Este servicio tiene un doble objetivo:</div>
+ * <ul> 1.- Por un lado, suministra los m�todos necesarios para que el servidor gestione
+     los lugares de almacenamiento para cada cliente.</ul>
+
+   <ul>2.- Se encarga de la operaci�n de bajada de ficheros desde el repositorio al cliente,
+ es decir, cuando un cliente quiere bajar un fichero se lo pide al servidor mediante el 
+servicio Gestor. Una vez que el servidor averigua que repositorio aloja el fichero requerido
+ por el cliente, �ste llama a un m�todo del Servicio Servidor-Operador y le pasa la URL del 
+cliente para que pueda llamar al m�todo de descarga del servicio DiscoCliente que es el que 
+realmente se encarga de la descarga</ul>
+ * 
+ * 
+ * Con licencia GPL v3
+ * @see RegistroRMI
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ *******************************************************************************************/
+public class ServicioSrOperadorImpl extends UnicastRemoteObject
+                            implements ServicioSrOperadorInterface
+  {
+	private static final long serialVersionUID = 123456789L;
+	
+  private String nickRepositorio;//nombre que identifica este Repositorio
+  
+  
+  
+  /**
+   * Constructor:no hace nada
+   */
+  public ServicioSrOperadorImpl() throws RemoteException
+    {
+    super();
+    }
+
+  /**
+   * Constructor que establece el nombre del repositorio
+   */
+  public ServicioSrOperadorImpl(String nombre) throws RemoteException
+    {
+    super();
+    
+    this.nickRepositorio=nombre;
+    }
+  
+  //m�todos p�blicos
+  //get set
+  public void setNicRepositorio(String nombre)throws RemoteException
+    {
+    nickRepositorio=nombre;  
+    }
+    
+  
+  public String getNickRepositorio() throws RemoteException   
+    {
+    return nickRepositorio;
+    }  
+  
+    
+  //m�todos del servicio  
+  
+  /**********************************************************************************************
+     m�todo ofrecido para que el servidor gestione el lugar de almacenamiento (carpeta) para los
+     ficheros de un cliente, cuyo ID se pasa como parametro
+     @param cadena con el ID del cliente
+     @return true si no se produjo error, false en caso contrario
+   *********************************************************************************************/  
+  public Boolean  carpetaParaCliente(String IDCliente) throws RemoteException
+    {
+    //el directorio raiz del paquete sera la ubicacion actual del repositorio
+    File directorio=new File("repo_"+nickRepositorio+"//"+IDCliente);
+    Boolean res=directorio.mkdirs();
+    return res;
+    }//fin carpeta para cliente
+    
+  public Boolean bajarFichero(String IDCliente, String nombreFichero) throws RemoteException, NotBoundException
+    {
+    Boolean resultado=false;
+    //obtenemos el fichero. sabemos que existe
+    Fichero  fichero= new Fichero(nombreFichero,IDCliente);
+	//llamamos al servicio de cliente para bajar fichero al mismo
+    resultado=((ServicioDiscoClienteInterface)
+                    NubeRMI.obtenerRefDiscoCliente(IDCliente)).bajarFichero(fichero);    
+        
+    return resultado;
+    }//fin bajarFichero
+ //metodo de prueba
+    
+      public String msgServicioClOperador(String mensaje)
+                    throws RemoteException
+     {
+       String msgRetorno="msg desde callback";
+      System.out.println("mensaje desde callback para enviar");
+      return msgRetorno;
+      
+      }//fin setConfTablero el tablero
+              
+      
+     
+      
+}//fin clase CallBackJugdorImpl

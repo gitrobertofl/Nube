@@ -1,0 +1,315 @@
+package servidor; 
+  
+import java.util.Scanner;
+import java.io.*;//Console;
+  
+/****************************************************************************** 
+ * <div>Esta clase va a contener los métodos para el entorno de usuario en modo
+ * texto del programa, para lo cual implementa GUIServidorInterface</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ *****************************************************************************/
+
+public class GUIServidorTexto implements GUIServidorInterface
+  {
+  /*==========================================================================
+    Atributos de la clase
+    ========================================================================*/  
+  // límites de opcion del menu  
+  public final static char opcionInicial='1';
+  public final static char opcionFinal='4';
+  /*===========================================================================
+   * Constructores de la clase
+   * ==========================================================================*/      
+  public GUIServidorTexto()
+    {
+    //no necesita nada  
+    }
+  /*=================================================================================
+   * Metodos publicos
+   * ========================================================================*/    
+  //inicio y fin
+
+  /**************************************************************************
+   * 
+   * <div> Este es el menu principal del servidor</div>
+   * <div> Si se pulsa intro o una tecla que no este en el intervalo de 
+   * opcion, devuelve el caracter 'n'. En caso contrario, la primera tecla
+   * pulsada</div>
+   *
+   * @param Un String con la direccion IP del host en ejecución   
+   *  @return un char con la opción elegida o 'n' en caso contrario 
+   * 
+   *************************************************************************/  
+  public char menuInicioServidor(String direccionIP)
+    {
+    @SuppressWarnings("resource")//para no cerrar Scanner
+    Scanner teclado=new Scanner(System.in);
+   
+    char tecla='s'; //captura la primera tecla pulsada
+    String cadenaEntrada="";
+    //limites de opcion
+    char opcionInicial='1';
+    char opcionFinal='4';
+    this.verCabecera(direccionIP);
+    System.out.println(" 1 - Listar clientes");
+    System.out.println(" 2 - Listar repositorios");
+    System.out.println(" 3 - Listar Parejas Repositorio-Cliente");
+    System.out.println(" 4 - salir");
+    System.out.println("");
+    System.out.println("Pulsar una opcion y despues intro. Si es erronea volvera a este menu");
+    System.out.print("opcion elegida : ");
+    cadenaEntrada=teclado.nextLine();
+    //si no es solo intro la cadena esta vacia, volver a imprimir
+    //si solo se pulsa intro, la cadena esta vacia, por lo que hay que volver a imprimir
+    if ((cadenaEntrada.length()==0) ||
+           ((cadenaEntrada.charAt(0)<opcionInicial)&&(cadenaEntrada.charAt(0)>opcionFinal)))
+      {
+      tecla='n';   
+      }//fin si entrada vacia
+     else
+      {
+      tecla=cadenaEntrada.charAt(0);   
+      }
+    return tecla;
+    }//fin pantalla inicio
+
+  /**************************************************************************
+   * 
+   * <div> Pantalla informativa donde finaliza la ejecución del servidor,
+   *  incluido el registro RMI. Utiliza pulsaTecla para esperar la 
+   *  actución del usuaruio</div>
+   *  
+   *  @param cadena con la direccion IP
+   * 
+   *************************************************************************/  
+  public void finDePrograma(String direccionIP)
+    {
+	   this.verCabecera(direccionIP);
+    System.out.println("fin servidor");
+    }//fin finDePrograma
+ 
+  /**************************************************************************
+   * 
+   * <div> Pantalla en la que se visualiza de forma simple el listado de 
+   * clientes dados de alta en el sistema.</div>
+   * <div>Recibe una cadena con una fila por cada registro de la consulta
+   *  solicitada al servicio de datos.
+   *   
+   *  @param Cadena con una fila por cada cliente en el sistema</div>
+   * 
+   *************************************************************************/  
+   public void verListadoClientes(String listado)
+     {
+	 this.verCabecera();
+     System.out.println("                       Listado de clientes");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }
+
+  /**************************************************************************
+   * 
+   * <div> Pantalla en la que se visualiza de forma simple el listado de 
+   * repositorios dados de alta en el sistema.</div>
+   * <div>Recibe una cadena con una fila por cada registro de la consulta
+   *  solicitada al servicio de datos.
+   *   
+   *  @param Cadena con una fila por cada repositorio en el sistema</div>
+   * 
+   *************************************************************************/  
+   public void verListadoRepositorios(String listado)
+     {
+	 this.verCabecera();
+     System.out.println("                     Listado de repositorios");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }  
+
+  /**************************************************************************
+   * 
+   * <div> Pantalla en la que se visualiza de forma simple el listado de 
+   * clientes asociados a repositorios </div>
+   * <div>Recibe una cadena con una fila por cada registro de la consulta
+   *  solicitada al servicio de datos.
+   *   
+   *  @param Cadena con una fila por cada asociacion cliente-repositorio</div>
+   * 
+   *************************************************************************/  
+  public void verListadoRepoClie(String listado)
+    {
+	this.verCabecera();
+    System.out.println("           Listado de Listado de repositorios con clientes");
+    System.out.println("---------------------------------------------------------------------------");
+    System.out.println("  nombre de repositorio   Nombre de cliente");
+    //datos   
+    System.out.println(listado);
+    //pulsa tecla
+    pulsaIntro();   
+    }  
+  
+  //errores   
+  /**************************************************************************
+   * 
+   * <div> Pantalla con mensaje del error (autoexplicativa) </div>
+   *   
+   *  @param Cadena con el error
+   * 
+   *************************************************************************/  
+   public void servidorEjecutandose (String error)
+     {
+	 this.verCabecera();  
+     System.out.println("El servidor ya se estaba ejecutando "); 
+     System.out.println("fin de ejecución");
+     } 
+
+  /**************************************************************************
+   * 
+   * <div> Pantalla con mensaje del error (autoexplicativa) </div>
+   *   
+   *  @param Cadena con el error
+   * 
+   *************************************************************************/  
+   public void errorRegistroRMI() 
+     {
+	 this.verCabecera();
+	 System.err.println("No hay registro RMI");  
+     }//fin errorRegistroRMI   
+     
+  /**************************************************************************
+   * 
+   * <div> Pantalla con mensaje del error (autoexplicativa) </div>
+   *   
+   *  @param Cadena con el error
+   * 
+   *************************************************************************/  
+   public void errorAccesoRemotoObjeto(String en) 
+     {
+	 this.verCabecera();  
+     System.out.println("Error de acceso objeto remoto en "+en );  
+     }
+
+  /**************************************************************************
+   * 
+   * <div> Pantalla con mensaje del error (autoexplicativa) </div>
+   *   
+   *  @param Cadena con el error
+   * 
+   *************************************************************************/  
+   public void errorGenerico(String en)
+     {
+	 this.verCabecera();  
+     System.err.println("Servidor: excepci�n gen�rica "+en);   
+     }
+     
+  /**************************************************************************
+   * 
+   * <div> Pantalla con mensaje del error (autoexplicativa) </div>
+   *   
+   *  @param Cadena con el error
+   * 
+   *************************************************************************/  
+   public void opcionErronea()
+     {
+	 this.verCabecera();  
+     System.out.print("opcion erronea");   
+     }
+ 
+
+  //otros complementarios
+  
+   public void listaRegistro(String [] nombres)
+     {
+	   this.verCabecera();
+     System.out.println("Estado del servicio de base de datos");
+     //   System.out.println("registro RMI: "+registroRMI);
+     for (int i=0; i<nombres.length; i++)
+       {
+       System.out.println("objeto remoto "+i+" : "+ nombres[i]+"\n");
+       }//fin for
+     pulsaIntro();
+     }//fin listaRegistro
+
+  /*===========================================================================
+   * Metodos privados
+   * ========================================================================*/    
+
+  /**************************************************************************
+   * <div>Este metodo implementa la forma de determinar la accion por la que 
+   * el usuario se da por enterado del mensaje que el muestra el sistema.</div>
+   * <div> Muestra uno u otro mensaje segun este en IDE o en consola. Esto es
+   * así para sortear el problema de que los IDE desactivan la consola del 
+   *  sistema</div>
+   *************************************************************************/   
+  private void pulsaIntro()
+    {
+    System.out.print("Pulsa intro  ");
+       
+    Console terminal = System.console();
+    String cadenaEntrada="";
+    //si consola virtual, contrase�a en claro
+    if (terminal==null )
+      {
+      @SuppressWarnings("resource")//para no cerrar Scanner	
+      Scanner teclado=new Scanner(System.in);    
+      System.out.print("Fuera de consola.");
+      cadenaEntrada=teclado.nextLine();
+      //si no es intro, se actualiza la contrase�a
+      if (cadenaEntrada.length()==0)
+        {
+        cadenaEntrada=""; //borrado por seguridad.
+        }//fin si la cadena no vacia
+      }//fin si terminal==0
+     else
+      {//tiene consola
+      try
+        {
+        cadenaEntrada=new String(terminal.readPassword());
+        }
+       catch  (IOError io)
+        {
+        System.out.println("no se pudo capturar : "+io);
+        }
+      }//fin sino terminal
+    }//fin pulsa Intro        
+
+  /**************************************************************************
+   * <div>Este metodo ejecuta un scroll de pantalla para limpiarla y 
+   * visualizar solo lo que interesa</div>
+   *************************************************************************/   
+  private void limpiarPantalla()
+    {
+    for (int i=0;i<50;i++)
+      {
+      System.out.println(); 
+      }
+    }//fin limpiarPantalla  
+
+  /**************************************************************************
+   * <div>Este metodo implementa la visualizacion de la cabecera de todas las
+   * pantallas de servidor</div>
+   *************************************************************************/   
+  private void verCabecera(String direccionIP)
+    {
+    limpiarPantalla();
+    //cabecera
+	System.out.println("                  SERVIDOR en IP:"+direccionIP);
+    System.out.println("--------------------------------------------------------------------------");
+    System.out.println("                   ALMACENAMIENTO EN LA NUBE");
+    System.out.println("---------------------------------------------------------------------------");
+    System.out.println("");
+    }//fin ver cabecera    
+    
+    
+  }//fin clase GUIServidorTexto

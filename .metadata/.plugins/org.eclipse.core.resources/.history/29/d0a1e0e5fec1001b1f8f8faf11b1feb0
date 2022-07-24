@@ -1,0 +1,33 @@
+package usuario;
+
+public interface GUIClienteInterface
+  {
+
+	
+	
+	public Character menuUsuarioAcreditado(String IDCliente);
+	
+	public String nombreFichero(String IDCliente);
+	
+	public Boolean esAjeno();
+	
+	public String nombrePropietario(String IDCliente);
+
+	public void avisoRepoNoActivo(String iDCliente);
+	
+	public void errorNombreFichero(String iDCliente);
+	
+	public void errorFicheroNoExiste (String iDCliente);
+	
+	public void errorFicheroRepe (String iDCliente);
+	
+	public void errorBajadaFichero(String iDCliente);
+	
+	public void verListadoClientes(String listado);
+	
+	public void verListadoFicherosCliente(String IDRepositorio, String IDCliente, String listado);
+	
+	
+	
+	
+  }//fin interface GUIClienteInterface

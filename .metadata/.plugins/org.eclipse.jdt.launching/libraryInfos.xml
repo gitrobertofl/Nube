@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<libraryInfos>
+    <libraryInfo home="D:\Java\openjdk-11.0.2" version="11.0.2"/>
+    <libraryInfo home="D:\Java\jdk1.8.0_25" version="1.8.0_25">
+        <bootpath>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\resources.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\rt.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\sunrsasign.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\jsse.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\jce.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\charsets.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\jfr.jar"/>
+            <entry path="D:\Java\jdk1.8.0_25\jre\classes"/>
+        </bootpath>
+        <extensionDirs>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\ext"/>
+            <entry path="C:\WINDOWS\Sun\Java\lib\ext"/>
+        </extensionDirs>
+        <endorsedDirs>
+            <entry path="D:\Java\jdk1.8.0_25\jre\lib\endorsed"/>
+        </endorsedDirs>
+    </libraryInfo>
+    <libraryInfo home="H:\Java\eclipse_win\eclipse-java-2020-09-R-win32-x86_64\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="/usr/lib/jvm/java-11-openjdk-amd64" version="11.0.9.1"/>
+    <libraryInfo home="C:\_PTR\SIDI\eclipse-java-2020-09-R-win32-x86_64\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="D:\repositorio\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="D:\programas_autonomos\openjdk-11.0.2" version="11.0.2"/>
+    <libraryInfo home="D:\Java\eclipse\eclipse-java-2020-09-R-win32-x86_64\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="C:\Users\rfuentel\Documents\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="E:\Java\eclipse_win\eclipse-java-2020-09-R-win32-x86_64\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="D:\Java\eclipse_win\eclipse-java-2020-09-R-win32-x86_64\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="D:\Java\eclipse_win\eclipse-java-2020-09-R-win64\eclipse\jdk-15" version="15"/>
+    <libraryInfo home="E:\Java\eclipse\eclipse-java-2020-09-R-win32-x86_64\eclipse\jdk-15" version="15"/>
+</libraryInfos>

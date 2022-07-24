@@ -1,0 +1,11 @@
+package usuario;
+
+public interface GUIClienteInterface
+  {
+
+	
+	
+	public Character menuUsuarioAcreditado(String IDCliente);
+	
+	
+  }//fin interface GUIClienteInterface

@@ -1,0 +1,115 @@
+package servidor; 
+//import java.io.Serializable;
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ *  Esta clase contiene el registro de fichero
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * 
+ * @version 20201230
+ * 
+ ********************************************************************************/
+
+public class FicheroBD// implements Serializable
+  {
+  /*==============================================================================
+   * Atributos de la clase
+   ===============================================================================*/    
+  private String nombreCliente;
+  private String nombreRepositorio;
+  private String nombreFichero;
+  private Boolean compartido;
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/    
+  /**********************************************************************************
+   * El constructor por defecto crea un RepoClie con nombre y password 
+   * en blanco y no activo
+   *********************************************************************************/
+  public FicheroBD()
+    {
+    this.nombreCliente="";
+    this.nombreRepositorio="";
+    this.nombreFichero="";
+	this.compartido=false;
+    }//fin constructor por defecto
+  /**********************************************************************************
+   * Este constructor recibe como argumentos el cliente, el repo y el fichero
+   * Por defecto no esta compartido
+   * que asigna a los atributos. 
+   *********************************************************************************/
+  public FicheroBD(String IDCliente, String IDRepo,String nFichero)
+    {
+    this.nombreCliente=IDCliente;
+    this.nombreRepositorio=IDRepo;
+    this.nombreFichero=nFichero;
+	this.compartido=false;
+    }//fin constructor FicheroBD (idcliente,idrepo,fichero)
+  /*======================================================================
+   * Metodos publicos
+   * ==============================================================================*/    
+  /**********************************************************************************
+   * Este metodo obtiene la referencia a una cadena (String) con el contenido
+   * del atributo nombre de Cliente
+   * 
+   * @return String con el nombre del cliente
+   *********************************************************************************/
+  public synchronized String getNombreCliente()
+    {
+    return this.nombreCliente;
+    }
+  /**********************************************************************************
+   * Este metodo obtiene la referencia a una cadena (String) con el contenido del 
+   * atributo nombre de repositorio
+   * 
+   * @return String con el nombre del repositorio
+   *********************************************************************************/
+  public synchronized String getNombreRepositorio()
+    {
+    return this.nombreRepositorio;
+    }
+  
+  /**********************************************************************************
+   * Este metodo obtiene la referencia a una cadena (String) con el contenido del 
+   * atributo nombre de fichero
+   * 
+   * @return String con el nombre del fichero
+   *********************************************************************************/
+  public synchronized String getNombreFichero()
+    {
+    return this.nombreFichero;
+    }
+    
+  public synchronized Boolean estaCompartido()
+    {
+		
+	return compartido;	
+	}  
+
+  public synchronized void compartir()
+    {
+	compartir=true;	
+	}
+	
+ public synchronized void noCompartir()
+    {
+	compartir=false;	
+	} 
+    
+    public String toString()
+      {
+      return nombreRepositorio+" "+nombreCliente+" "+nombreFichero;  
+        }
+    
+
+
+
+  
+}//fin clase

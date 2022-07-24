@@ -1,0 +1,55 @@
+package servidor; 
+
+
+import java.rmi.*;
+
+/**
+ * Los objetos remotos que implementen este interface serán capaces de 
+ * crear u obtener una referencia a un registro RMI, así como el 
+ * alta o baja de otros objetos remotos desde otro host (por seguridad
+ * no se permite bind, rebind y unbind desde fuera del mismo host)
+ * 
+  Con licencia GPL v3 (añadir enlace a la licencia)
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ */
+
+public interface RegObjInterface extends Remote
+  {
+  /******************************************************************************
+   * <div>Método para la gestión del registro RMI.</div>
+   * <div>Se registra el objeto remoto en el directorio, al ser este el host
+   * que da el servicio de registro RMI (desde fuera no se puede)</div>
+   * .
+   * @param objetoRemoto es el objeto a registrar
+   * @param registro es en el que se va registrar el objeto remoto
+   * @param nombreSimbolico es una cadena con el nombre que asignamos al objeto
+   *                   en el registro
+   * 
+   *****************************************************************************/  
+
+   public void registrarObjetoRemoto(String nombreSimbolico,Remote objetoRemoto )
+        throws RemoteException;   
+  /******************************************************************************
+   * <div>Método para la gestión del registro RMI.</div>
+   * <div>Se borra la referencia al objeto remoto en el directorio, al ser este el host
+   * que da el servicio de registro RMI (desde fuera no se puede)</div>
+   * .
+   * @param registro es en el que se va eliminar el objeto remoto
+   * @param nombreSimbolico es una cadena con el nombre que tiene asignado el
+   *               objeto en el registro
+   * @return false si hubo problema. 
+   * 
+   *****************************************************************************/  
+         
+   public Boolean desRegistrarObjetoRemoto(String nombreSimbolico) 
+          throws RemoteException;
+          
+          
+    
+          
+      
+  }

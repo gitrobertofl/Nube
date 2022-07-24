@@ -1,0 +1,212 @@
+package servidor; 
+
+import java.rmi.*;
+import java.rmi.server.*;
+//import java.util.Random;
+/*INTERFAZ REMOT RECUERDA:CUANDO ACABES PASAR UNA COPIA DEL OTRO PAQUETE*/
+
+//import basededatos.ServicioDatosInterface; 
+//import cliente.AcreditacionUsuario;
+//import cliente.ServicioDiscoClienteInterface;
+
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21). 
+ *
+ * <div>Esta clase es una implementaci�n del servicio de autenticaci�n del 
+ * servidor. Implementa los m�todos necesarios para permitir la comunicaci�n 
+ * del servidor con los clientes remotos para acreditarlos</div>
+ *
+ *
+ * <div>En el constructor necesita recibir una referencia al servicio de 
+ * base de datos remoto</div>
+ * 
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *
+ * rfuente4@alumno.uned.es
+ * robertofl@aconute.es
+ * 
+ * @version 20201106
+ * 
+ ********************************************************************************/
+
+ private final String TIPO_CLIENTE="cliente";
+ private final TIPO_REPOSITORIO="repositorio";
+
+
+
+public class ServicioAutenticacionImpl extends UnicastRemoteObject
+                            implements ServicioAutenticacionInterface
+  {
+  /*==============================================================================
+   * Atributos de la clase
+   ===============================================================================*/ 
+  private static final long serialVersionUID = 123456789L;
+  private ServicioDatosInterface servicioDatos;
+  
+  private final String TIPO_CLIENTE="cliente";
+  private final String TIPO_REPOSITORIO="repositorio";
+
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/  
+  /**
+   * Constructor por defecto. obtiene referencias a los servicios remotos que precisa:
+   * servicio de datos.
+   */
+  public ServicioAutenticacionImpl()throws RemoteException
+    {
+    super();
+    
+    }
+  /**
+   * Constructor que recibe como par�metro una referencia v�lida del servicio de 
+   * base de datos remoto, asign�ndolo al atributo base de datos de esta clase.
+   * 
+   * @param ServicioDatosInterface datos 
+   * 
+   */
+  public ServicioAutenticacionImpl(ServicioDatosInterface datos)throws RemoteException
+    {
+    super();  
+    servicioDatos=datos;  
+    }
+  
+  /*================================================================================
+        Metodos publicos 
+   ================================================================================*/
+  /**********************************************************************************
+   * Metodo remoto que recibe como parametros el ID y la contrasena de cliente y pwd
+   * junto con el tipo de usuario (cliente o repositorio)
+   * y pide que se anada a la base de datos si se puede.
+   * 
+   * @param IDUsuario cadena con el id del usuario
+   * @param pwd cadena con la contrasena del cliente
+   * @param una cadena que indica el tipo de usuario
+   * 
+   * @return Si ya existe o error, devuelve false,true en caso contrario. Por ejemplo
+   * 		si el tipo de usuario no existe y ya existe el usuario
+   *********************************************************************************/
+  public Boolean altaUsuario(String IDUsuario, String pwd, String tipoUsuario)
+        throws RemoteException
+    {
+	 Boolean error=false;
+	 switch( tipoUsuario)
+	   {
+	   case TIPO_CLIENTE :error=servicioDatos.addCliente(IDCliente,pwd);
+	 	   				  break;
+	   case TIPO_REPOSITORIO :servicioDatos.addRepositorio(IDRepositorio,pwd);
+	 						  break;
+	   default: error=true;
+	 		
+	   }//FIN SWITCH
+	 			 		
+	 			
+	  
+	  
+	  
+    }
+  
+  
+  
+  
+  /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de cliente 
+   * y pide que se a�ada a la base de datos, si se puede.
+   * 
+   * @param IDCliente cadena con el id del cliente
+   * @param pwd cadena con la contrase�a del cliente
+   * 
+   * @return Si ya existe o error, devuelve false,true en caso contrario
+   *********************************************************************************/
+  public Boolean altaCliente(String IDCliente, String pwd)
+        throws RemoteException
+    {
+    return servicioDatos.addCliente(IDCliente,pwd);
+    }//fin alta cliente
+  
+ /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de repositorio
+   * y pide que se a�ada a la base de datos, si se puede.
+   * 
+   * @param IDRepositorio cadena con el id del repositorio
+   * @param pwd cadena con la contrase�a del repositorio
+   * 
+   * @return Si ya existe o error, devuelve false,true en caso contrario
+   *********************************************************************************/
+ public Boolean altaRepositorio(String IDRepositorio, String pwd)
+        throws RemoteException
+   {
+   return servicioDatos.addRepositorio(IDRepositorio,pwd);
+   }//fin alta repositorio
+ 
+ /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de cliente 
+   * y pide a la base de datos si existe con estos datos.
+   * 
+   * @param IDCliente cadena con el id del cliente
+   * @param pwd cadena con la contrase�a del cliente
+   * 
+   * @return Si no existe ID o error en contrase�a, devuelve ""
+   *            ID de sesi�n (cadena aleatoria) en caso contrario
+   *********************************************************************************/
+ public String autenticarCliente(String IDCliente, String pwd) 
+                throws RemoteException 
+   {
+   return servicioDatos.existeClienteAcreditado(IDCliente,pwd);
+   }// autenticarCliente              
+
+ /**********************************************************************************
+   * M�todo remoto que recibe como par�metros el ID y la contrase�a de repositorio 
+   * y pide a la base de datos si existe con estos datos.
+   * 
+   * @param IDCliente cadena con el id del repositorio
+   * @param pwd cadena con la contrase�a del repositorio
+   * 
+   * @return Si no existe ID o error en contrase�a, devuelve ""
+   *            ID de sesi�n (cadena aleatoria) en caso contrario
+   *********************************************************************************/ 
+ public String autenticarRepositorio(String IDRepositorio, String pwd) 
+                throws RemoteException 
+   {
+   return servicioDatos.existeRepositorioAcreditado(IDRepositorio,pwd);
+   }// autenticarRepositorio              
+ 
+   
+  
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarCliente(String IDCliente)
+         throws RemoteException 
+    {
+    servicioDatos.desactivarCliente(IDCliente);         
+    }//fin desactivarRepositorio
+   
+   
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarRepositorio(String IDRepositorio)
+         throws RemoteException 
+    {
+    servicioDatos.desactivarRepositorio(IDRepositorio);        
+    }//fin desactivarRepositorio
+   
+    
+    //m�todo de pruebas
+  public String servicioAutenticacion(String mensaje) throws RemoteException
+   {
+   String msgRetorno="msg desde servidor autenticacion";
+   System.out.println("mensaje desde autenticacion para enviar");
+   
+   return msgRetorno;
+   }//fin notificadato
+    
+  }//fin clase servicioAutenticacionImpl

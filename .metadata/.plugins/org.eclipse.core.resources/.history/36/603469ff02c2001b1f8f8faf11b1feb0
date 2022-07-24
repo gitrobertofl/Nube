@@ -1,0 +1,226 @@
+package servidor; 
+  
+import java.util.Scanner;
+import java.io.*;//Console;
+  
+/** 
+ * esta clase va a contener los métodos para la visualización de la vista principal del programa
+ * 
+ * @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * @version 20201103
+ * 
+ */
+
+public class GUIServidorTexto implements GUIServidorInterface
+  {
+  // límites de opcion   
+  public final static char opcionInicial='1';
+  public final static char opcionFinal='4';
+  /**
+   * Constructor de vista texto. Se le pasa como parametro el tpv
+   */
+  public GUIServidorTexto()
+    {
+      
+    }
+  /**
+   * 
+   * devuelve s si se seleccion� una tecla. n si vac�o
+   * 
+   * 
+   * 
+   */  
+  public char menuInicioServidor()
+    {
+    @SuppressWarnings("resource")//para no cerrar Scanner
+    Scanner teclado=new Scanner(System.in);
+   
+    char tecla='s'; //captura la primera tecla pulsada
+    String cadenaEntrada="";
+    //l�mites de opci�n
+    char opcionInicial='1';
+    char opcionFinal='4';
+    this.verCabecera();
+   
+    System.out.println("             SERVIDOR");
+    System.out.println(" 1 - Listar clientes");
+    System.out.println(" 2 - Listar repositorios");
+    System.out.println(" 3 - Listar Parejas Repositorio-Cliente");
+    System.out.println(" 4 - salir");
+    System.out.println("");
+    System.out.println("Pulsar una opcion y despues intro. Si es erronea volvera a este menu");
+    System.out.print("opcion elegida : ");
+    cadenaEntrada=teclado.nextLine();
+    //si no es solo intro la cadena esta vacia, volver a imprimir
+    //si solo se pulsa intro, la cadena esta vacia, por lo que hay que volver a imprimir
+    if ((cadenaEntrada.length()==0) ||
+           ((cadenaEntrada.charAt(0)<opcionInicial)&&(cadenaEntrada.charAt(0)>opcionFinal)))
+      {
+      tecla='n';   
+      }//fin si entrada vacia
+     else
+      {
+      tecla=cadenaEntrada.charAt(0);   
+      }
+    return tecla;
+    }//fin pantalla inicio
+
+   public void listaRegistro(String [] nombres)
+     {
+	   this.verCabecera();
+     System.out.println("Estado del servicio de base de datos");
+     //   System.out.println("registro RMI: "+registroRMI);
+     for (int i=0; i<nombres.length; i++)
+       {
+       System.out.println("objeto remoto "+i+" : "+ nombres[i]+"\n");
+       }//fin for
+     
+     pulsaIntro();
+     }//fin listaRegistro
+   
+   public void finDePrograma()
+    {
+	   this.verCabecera();
+    System.out.println("fin servidor");
+    
+    }
+  
+  
+   public void verListadoClientes(String listado)
+     {
+	 this.verCabecera();
+     //cabecera
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("                       Listado de clientes");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }
+    
+     
+   
+   public void verListadoRepositorios(String listado)
+     {
+	 this.verCabecera();
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("                     Listado de repositorios");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre    ID sesion");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }  
+ 
+     
+   public void verListadoRepoClie(String listado)
+     {
+	 this.verCabecera();
+     System.out.println("--------------------------------------------------------------------------");
+     System.out.println("           Listado de Listado de repositorios con clientes");
+     System.out.println("---------------------------------------------------------------------------");
+     System.out.println("  nombre de repositorio   Nombre de cliente");
+     //datos   
+     System.out.println(listado);
+     //pulsa tecla
+     pulsaIntro();   
+     }  
+  
+   
+      
+   public void servidorEjecutandose (String error)
+     {
+	 this.verCabecera();  
+     System.out.println("El servidor ya se estaba ejecutando "); 
+     System.out.println("fin de ejecución");
+        
+     } 
+   public void errorRegistroRMI() 
+     {
+	 this.verCabecera();
+	 System.err.println("No hay registro RMI");  
+     }//fin errorRegistroRMI   
+     
+   public void errorAccesoRemotoObjeto(String en) 
+     {
+	 this.verCabecera();  
+     System.out.println("Error de acceso objeto remoto en "+en );  
+     }
+   public void errorGenerico(String en)
+     {
+	 this.verCabecera();  
+     System.err.println("Servidor: excepci�n gen�rica "+en);   
+     }
+     
+   public void opcionErronea()
+     {
+	 this.verCabecera();  
+     System.out.print("opcion erronea");   
+     }
+     
+   /*
+   /**
+    * depende de si es consola o IDE
+    * 
+    * 
+    */   
+      
+   private void pulsaIntro()
+     {
+     System.out.print("Pulsa intro  ");
+        
+     Console terminal = System.console();
+     String cadenaEntrada="";
+        //si consola virtual, contrase�a en claro
+        if (terminal==null )
+          {
+          @SuppressWarnings("resource")//para no cerrar Scanner	
+          Scanner teclado=new Scanner(System.in);    
+          System.out.print("Fuera de consola.");
+          cadenaEntrada=teclado.nextLine();
+          //si no es intro, se actualiza la contrase�a
+          if (cadenaEntrada.length()==0)
+            {
+            cadenaEntrada=""; //borrado por seguridad.
+            }//fin si la cadena no vacia
+          }//fin si terminal==0
+         else
+          {//tiene consola
+          try
+            {
+            cadenaEntrada=new String(terminal.readPassword());
+            }
+           catch  (IOError io)
+            {
+            System.out.println("no se pudo capturar : "+io);
+            }
+          }//fin sino terminal
+       
+     }//fin pulsa Intro        
+     
+    private void limpiarPantalla()
+     {
+    
+     for (int i=0;i<50;i++)
+       {
+       System.out.println(); 
+       }
+     }//fin limpiarPantalla  
+
+    private void verCabecera()
+    {
+    limpiarPantalla();
+    //cabecera
+    System.out.println("--------------------------------------------------------------------------");
+    System.out.println("                   ALMACENAMIENTO EN LA NUBE");
+    System.out.println("---------------------------------------------------------------------------");
+    System.out.println("");
+    }    
+    
+    
+  }//fin clase GUIServidorTexto

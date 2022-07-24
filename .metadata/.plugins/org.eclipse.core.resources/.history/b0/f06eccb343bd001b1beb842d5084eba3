@@ -1,0 +1,292 @@
+ package servidor; 
+import java.rmi.*;
+import java.rmi.server.*;
+
+/********************************************************************************
+   
+ *  PRACTICA DE SISTEMAS DISTRIBUIDOS (20-21)
+ *
+ * <div>Esta clase implementa la interface remota del servicio de datos.
+ * Implementa los m�todos necesarios para permitir la comunciaci�n de la base 
+ * de datos con el servidor remoto</div>
+ *
+ * <div>En este clase tendremos una referencia a la base de datos</div>
+ *
+ * <div>Extiende Remote para exportacion RMI</div>
+ * <div>Para evitar problemas de seguridad, incluye m�todos para a�adir y quitar
+ * binds al registro RMI</div>
+ * 
+ * <div>Con licencia GPL v3</div>
+ * 
+* @author Roberto J. de la Fuente Lopez 
+ *         rfuente4@alumno.uned.es
+ *         robertofl@aconute.es
+ * 
+ * @version 20201116
+ * 
+ ********************************************************************************/
+
+public class ServicioDatosImpl extends UnicastRemoteObject
+                               implements ServicioDatosInterface
+            
+  {
+  /*==============================================================================
+   * Atributos de la clase
+   ===============================================================================*/ 
+	private static final long serialVersionUID = 123456789L;  
+   //eliminar al final
+    Datos BD;
+   
+    
+  /*===============================================================================
+   * Constructores de la clase
+   * ==============================================================================*/  
+  /**********************************************************************************
+   * 
+   * <div>Constructor del servicio de datos. 
+   * Por defecto construye una estructura de datos vac�a
+   * </div>
+   *  
+   *********************************************************************************/  
+  public ServicioDatosImpl() throws RemoteException
+    {
+    super(); //constructor UnicastRemoteObject
+    
+    //crea una referencia a la base de datos vac�a
+    this.BD=new Datos();
+    
+    //lo hacen las asignaciones por defecto    
+    
+    
+    System.out.println("se crea una base de datos limpia");
+    
+    }//fin constructor implementacion
+  
+  /**********************************************************************************
+   * 
+   *  <div>Constructor del servicio de datos. Simplemente crea una referencia a la base
+   * de datos en uso y una referencia al registro RMI</div>
+   * 
+   * @param una referencia a registro RMI
+   * @param una base de datos con registros
+   *********************************************************************************/  
+  public ServicioDatosImpl(Datos datos) throws RemoteException
+    {
+    super();//constructor UnicastRemoteObject
+    this.BD= datos; //obtenemos la referencia a una base de datos
+    
+    }//fin constructor implementacion
+  /*================================================================================
+     M�todos p�blicos 
+   ================================================================================*/  
+  /******************************************************************************
+   * <div>metodo remoto que que recibe un IDCliente y su contrase�a 
+   * y comprueba si esta en la base de datos</div>
+   * 
+   * @param usr Cadena con el nombre de usuario
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente est� acreditado y false si error
+   * 
+   *****************************************************************************/   
+  public String existeClienteAcreditado(String clienteID, String clientePwd)
+         throws RemoteException
+    {
+    return BD.existeClienteAcreditado(clienteID,clientePwd);    
+    }
+    
+  
+    
+    
+    
+  /******************************************************************************
+   * <div>metodo remoto que que recibe un IDRepositorio y su contrase�a 
+   * y comprueba si esta en la base de datos</div>
+   * 
+   * @param usr Cadena con el ID
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente est� acreditado y false si error
+   * 
+   *****************************************************************************/   
+  public String existeRepositorioAcreditado(String repositorioID, String repositorioPwd)
+         throws RemoteException
+    {
+    return BD.existeRepositorioAcreditado(repositorioID,repositorioPwd);   
+    }  
+  
+  public Boolean existeFichero(String IDCliente, String IDRepo,String nombreFichero)
+        throws RemoteException
+    {
+     return BD.existeFichero(IDCliente,IDRepo,nombreFichero);
+        
+        
+     }// fin public Boolean existeFichero
+    
+  /******************************************************************************
+   * <div>M�todo remoto que que recibe un idCliente y contrase�a 
+   * y lo a�ade a la base de datos<div>
+   * 
+   * @param usr Cadena con el nombre de usuario
+   * @param pwd Cadena con la contraseña
+   * @return devuelve true si el cliente se a�adi� y false si error
+   * 
+   *****************************************************************************/  
+  public Boolean addCliente(String clienteID, String clientePwd) 
+         throws RemoteException
+    {
+    boolean resultado=false; //indica si hubo error o no     
+    
+    System.out.println("El servicio datos va a a�adir cliente. Llama a Datos.insertar ciente");
+    resultado =BD.insertaCliente(clienteID,clientePwd);
+    System.out.println("Vuelve a Servicio de Datos. Dice si se a�adio "+resultado);
+    System.out.println("true a�adio false no a�adio");
+    return resultado; 
+    }//fin addCliente
+  
+    
+  /******************************************************************************
+   * <div>M�todo remoto que que recibe un idRepositorio y contrase�a 
+   * y lo a�ade a la base de datos<div>
+   * 
+   * @param usr Cadena con el nombre de usuario
+   * @param pwd Cadena con la contrase�a
+   * @return devuelve true si el cliente se a�adi� y false si error
+   * 
+   *****************************************************************************/  
+  public Boolean addRepositorio(String repositorioID, String clientePwd) 
+         throws RemoteException
+    {
+    boolean resultado=false; //indica si hubo error o no     
+    System.out.println("El servicio datos va a a�adir repositorio. Llama a Datos.insertarRepo");
+    resultado = BD.insertaRepositorio(repositorioID,clientePwd);
+    System.out.println("Vuelve a Servicio de Datos. �se a�adi�? "+resultado);
+    return resultado; 
+    }//fin addCliente
+  
+  public void subirFichero(String IDCliente, String IDRepo,String nombreFichero)
+            throws RemoteException
+    {
+    BD.altaFichero(IDCliente,IDRepo,nombreFichero);
+    
+    }//fin subirFichero
+  
+  public Boolean bajarFichero(String IDCliente, String IDRepo,String nombreFichero)
+         throws RemoteException
+    {
+    return BD.existeFichero(IDCliente,IDRepo,nombreFichero);
+    }//fin subirFichero 
+   
+
+  
+  public Boolean borrarFichero(String IDCliente, String IDRepo, String nFichero)
+		  throws RemoteException
+    {
+	return BD.borrarFichero(IDCliente,IDRepo,nFichero);  
+	}//fin borrar fichero
+  
+  
+  public Boolean compartirFichero(String IDCliente, String IDRepositorio, String nFichero)
+		  throws RemoteException
+    {
+	return BD.compartirFichero(IDCliente,IDRepositorio,nFichero);  
+	}//fin compartir fichero
+   
+  /**
+   * 
+   * asigna un cliente a un repositorio existente
+   */
+  public String asignarRepoClie(String IDCliente)       
+         throws RemoteException
+         
+    {
+    //devuelve el repositorio asignado
+    return BD.asignarRepoClie(IDCliente);
+    
+    }
+   
+     /**
+   * obtener repositorio asignado a cliente
+   * 
+   * se le da el id del cliente y devuelve cadena con el repo
+   * 
+   */
+   public  String obtenerRepoClie(String IDCliente) 
+            throws RemoteException
+     {
+      return BD.obtenerRepoClie(IDCliente);  
+     }//fin obtenerRepoClie
+    
+  
+    
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarCliente(String IDCliente)
+         throws RemoteException 
+    {
+    BD.desactivarCliente(IDCliente);         
+    }//fin desactivarRepositorio
+       
+    
+  /**
+   * para cerrar sesi�n hay que quitar el id de sesion y comprobar si tiene
+   * clientes activos colgados
+   */
+  public void desactivarRepositorio(String IDRepositorio)
+         throws RemoteException 
+    {
+    BD.desactivarRepositorio(IDRepositorio);        
+    }//fin desactivarRepositorio
+     
+    
+    
+    
+    
+   /**
+   * obtenemos un listado con todos los repositorios registrados en el servidor
+   * 
+   * @return una cadena con todos los clientes separados por salto de l�nea
+   */
+  public String getListadoClientes() throws RemoteException
+    {
+    return BD.listadoClientes();
+    
+    }//fin get ListadoClientes
+ 
+    /**
+   * obtenemos un listado con todos los repositorios registrados en el servidor
+   */
+  public String getListadoRepoClie() throws RemoteException
+    {
+    return BD.listadoRepoClie();
+    
+    }//fin get ListadoClientes   
+    
+    
+  /**
+   * obtenemos un listado con todos los repositorios registrados en el servidor
+   */
+  public String getListadoRepositorios() throws RemoteException
+    {
+    return BD.listadoRepositorios();
+    
+    }//fin get ListadoRepositorios
+  
+  /**
+   * obtenemos un listado de los clientes del repostorio
+   * @param cadena con el ID del Repositorio
+   */
+  public String listadoClientesRepo(String nickRepositorio)throws RemoteException  
+    {
+    return BD.listadoClientesRepo(nickRepositorio);
+    }  
+  /**
+   * obtenemos un listado de los ficheros subidos por un cliente determinado
+   */  
+    
+  public String getListadoFicherosCliente(String IDRepositorio, String IDCliente) throws RemoteException
+    {
+    return BD.listadoFicherosCliente(IDRepositorio, IDCliente); 
+    }  
+     
+  }//fin servicioDatosImpl

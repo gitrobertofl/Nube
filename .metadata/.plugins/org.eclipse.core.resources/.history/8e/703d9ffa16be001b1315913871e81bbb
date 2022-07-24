@@ -1,0 +1,39 @@
+package usuario;
+
+
+
+/******************************************************************************
+ * 
+ * 
+ * Clase ejecutora de cliente.
+ * Utiliza la clase Usuario para llamar a la parte de cliente (herencia)
+ * 
+ * 
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Cliente
+  {
+  private static final String TIPO_USUARIO="cliente";
+  
+  
+  
+  public static void main (String args[])
+    {
+	//gestor de seguridad
+    Usuario usuario = new UsrCliente()
+	if (usuario.getConectadoConSRV();)
+	  //una vez montado el esquema remoto, iniciamos el menu principal
+	  usuario.menuUsuario();    
+	 else
+   	  {	 
+	  GUIUsuarioInterface gUI = new GUIClienteTexto(TIPO_USUARIO);	 
+      gUI.finDePrograma();		 
+	  }
+    //termina todo  
+ 	System.exit(0); 
+		
+	}//fin del main
+  	  
+  }//fin clase Cliente
